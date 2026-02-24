@@ -1,9 +1,15 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
+
 const auditRoutes = require("./routes/audit.routes");
 
 const app = express();
+
+app.use(cors({
+    origin: "localhost:3000",
+    credentials: true,
+}));
 
 app.use(cors());
 app.use(express.json());

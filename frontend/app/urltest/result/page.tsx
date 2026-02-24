@@ -1,9 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function ResultPage() {
+  const router = useRouter();
   const [data, setData] = useState<any>(null);
+  const [userEmail, setUserEmail] = useState("");
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/auth");
+  };
 
   useEffect(() => {
     const stored = localStorage.getItem("auditResult");
@@ -14,6 +23,14 @@ export default function ResultPage() {
         setData(null);
       }
     }
+
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserEmail(user.email || "");
+      }
+    };
+    getUser();
   }, []);
 
   const handleExportPDF = async () => {
@@ -64,7 +81,26 @@ export default function ResultPage() {
   return (
     <div style={{ padding: 40, maxWidth: 1200, margin: "0 auto" }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 30 }}>
-        <h1>Audit Result</h1>
+        <div>
+          <h1 style={{ margin: 0, marginBottom: 5 }}>Audit Result</h1>
+          <span style={{ fontSize: 14, color: "#64748b" }}>{userEmail}</span>
+        </div>
+        <div style={{ display: "flex", gap: 10 }}>
+        <button
+          onClick={() => router.push("/urltest")}
+          style={{
+            padding: "10px 20px",
+            background: "#64748b",
+            color: "white",
+            border: "none",
+            borderRadius: 8,
+            cursor: "pointer",
+            fontSize: 14,
+            fontWeight: 500,
+          }}
+        >
+          🔙 Back
+        </button>
         <button
           onClick={handleExportPDF}
           style={{
@@ -80,6 +116,22 @@ export default function ResultPage() {
         >
           📄 Export PDF
         </button>
+        <button
+          onClick={handleLogout}
+          style={{
+            padding: "10px 20px",
+            background: "#ef4444",
+            color: "white",
+            border: "none",
+            borderRadius: 8,
+            cursor: "pointer",
+            fontSize: 14,
+            fontWeight: 500,
+          }}
+        >
+          Logout
+        </button>
+        </div>
       </div>
 
       <div id="audit-report">

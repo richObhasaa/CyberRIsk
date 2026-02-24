@@ -1,12 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
+import { supabase } from "../lib/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const [url, setUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserEmail(user.email || "");
+      }
+    };
+    getUser();
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    router.push("/auth");
+  };
 
   const handleSubmit = async () => {
     if (!url) {
@@ -41,7 +60,26 @@ export default function Home() {
 
   return (
     <div style={{ padding: 40 }}>
-      <h1>NIST Web Audit</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 30 }}>
+        <h1 style={{ margin: 0 }}>NIST Web Audit</h1>
+        <div style={{ display: "flex", alignItems: "center", gap: 15 }}>
+          <span style={{ fontSize: 14, color: "#64748b" }}>{userEmail}</span>
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: "8px 16px",
+              background: "#ef4444",
+              color: "white",
+              border: "none",
+              borderRadius: 6,
+              cursor: "pointer",
+              fontSize: 14,
+            }}
+          >
+            Logout
+          </button>
+        </div>
+      </div>
 
       <input
         type="text"

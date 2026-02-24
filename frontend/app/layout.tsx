@@ -1,34 +1,27 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+"use client";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-    title: "CyberRisk",
-    description: "CyberRisk application",
-};
+import { useRequireAuth } from "./lib/useRequireAuth";
 
 export default function RootLayout({
-    children,
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { loading } = useRequireAuth();
+
+  if (loading) {
     return (
-        <html lang="en">
-            <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-            >
-                {children}
-            </body>
-        </html>
+      <html lang="en">
+        <body style={{ background: "#111", color: "white" }}>
+          Checking authentication...
+        </body>
+      </html>
     );
+  }
+
+  return (
+    <html lang="en">
+      <body>{children}</body>
+    </html>
+  );
 }
