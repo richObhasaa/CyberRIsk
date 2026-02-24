@@ -1,31 +1,36 @@
 import { Router } from "express";
-import { supabase } from "../db/supabase";
+import axios from "axios";
+import { ENV } from "../config/env";
 
 const router = Router();
 
 /**
  * GET /api/health
- * Basic health check — confirms the API server is up and can reach Supabase.
+ * Confirms the API server is up and can reach Supabase by pinging
+ * the REST v1 root endpoint (GET <SUPABASE_URL>/rest/v1/).
  */
 router.get("/", async (_req, res) => {
-    try {
-        // Lightweight Supabase connectivity check
-        const { error } = await supabase.from("_health").select("1").limit(1);
+    let supabaseStatus: "connected" | "unreachable" = "unreachable";
 
-        res.json({
-            success: true,
-            status: "ok",
-            timestamp: new Date().toISOString(),
-            supabase: error ? "unreachable" : "connected",
+    try {
+        await axios.get(`${ENV.SUPABASE_URL}/rest/v1/`, {
+            headers: {
+                apikey: ENV.SUPABASE_KEY,
+                Authorization: `Bearer ${ENV.SUPABASE_KEY}`,
+            },
         });
+        supabaseStatus = "connected";
     } catch {
-        res.status(500).json({
-            success: false,
-            status: "error",
-            timestamp: new Date().toISOString(),
-            supabase: "unreachable",
-        });
+        // Supabase unreachable — still return 200 so load balancers
+        // know the API itself is alive; the supabase field signals the issue.
     }
+
+    res.json({
+        success: true,
+        status: "ok",
+        timestamp: new Date().toISOString(),
+        supabase: supabaseStatus,
+    });
 });
 
 export default router;
