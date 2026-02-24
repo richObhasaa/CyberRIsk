@@ -3,6 +3,7 @@ import cors from "cors";
 import { ENV } from "./config/env";
 import healthRouter from "./routes/health";
 import testRouter from "./routes/test";
+import urlRouter from "./routes/url";
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 // ── Routes ──────────────────────────────────────────────────
 app.use("/api/health", healthRouter);
 app.use("/api/test", testRouter);
+app.use("/api/url", urlRouter);
 
 // ── 404 Fallback ────────────────────────────────────────────
 app.use((_req, res) => {
