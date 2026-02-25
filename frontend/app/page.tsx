@@ -2,16 +2,16 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "./lib/supabaseClient";
+import { getAccessToken } from "./lib/auth";
 
 export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session) {
+    const checkAuth = () => {
+      const token = getAccessToken();
+
+      if (token) {
         router.push("/urltest");
       } else {
         router.push("/auth");
@@ -22,14 +22,16 @@ export default function Home() {
   }, [router]);
 
   return (
-    <div style={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      minHeight: "100vh",
-      fontSize: 18,
-      color: "#64748b",
-    }}>
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        fontSize: 18,
+        color: "#64748b",
+      }}
+    >
       Loading...
     </div>
   );

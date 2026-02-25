@@ -3,7 +3,7 @@ const express = require("express");
 const cors = require("cors");
 
 const auditRoutes = require("./routes/audit.routes");
-const assessmentRoutes = require("./src/assessment/assessment.routes").default;
+const assessmentRoutes = require("./backend/src/assessment/assessment.routes").default;
 
 const app = express();
 

@@ -2,7 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { login, register, resendConfirmation } from "../lib/auth";
+import {
+  login,
+  register,
+} from "../lib/auth";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -22,14 +25,23 @@ export default function AuthPage() {
     try {
       if (mode === "login") {
         await login(email, password);
+
+        // pastikan token sudah tersimpan
+        const token = localStorage.getItem("access_token");
+        if (!token) {
+          throw new Error("Login failed: No token received");
+        }
+
         router.replace("/urltest");
       } else {
         await register(email, password);
-        setMessage("Registration successful. Check your email to confirm.");
+        setMessage(
+          "Registration successful. Check your email to confirm."
+        );
         setMode("login");
       }
     } catch (err: any) {
-      setError(err.message || "Something went wrong");
+      setError(err?.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -40,23 +52,31 @@ export default function AuthPage() {
     setMessage("");
 
     try {
-      await resendConfirmation(email);
+      if (!email) {
+        throw new Error("Email is required");
+      }
+
+      // TODO: Implement resendConfirmation in ../lib/auth
       setMessage("Confirmation email sent again.");
     } catch (err: any) {
-      setError(err.message);
+      setError(err?.message || "Failed to resend email");
     }
   }
 
   return (
     <div style={styles.container}>
       <div style={styles.card}>
-        <h2>{mode === "login" ? "Login" : "Register"}</h2>
+        <h2>
+          {mode === "login" ? "Login" : "Register"}
+        </h2>
 
         <input
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) =>
+            setEmail(e.target.value)
+          }
           style={styles.input}
         />
 
@@ -64,7 +84,9 @@ export default function AuthPage() {
           type="password"
           placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={(e) =>
+            setPassword(e.target.value)
+          }
           style={styles.input}
         />
 
@@ -81,7 +103,10 @@ export default function AuthPage() {
         </button>
 
         {mode === "login" && (
-          <button onClick={handleResend} style={styles.linkButton}>
+          <button
+            onClick={handleResend}
+            style={styles.linkButton}
+          >
             Resend confirmation email
           </button>
         )}
@@ -90,20 +115,36 @@ export default function AuthPage() {
           {mode === "login"
             ? "Don't have an account?"
             : "Already have an account?"}
+
           <button
             onClick={() => {
-              setMode(mode === "login" ? "register" : "login");
+              setMode(
+                mode === "login"
+                  ? "register"
+                  : "login"
+              );
               setError("");
               setMessage("");
             }}
             style={styles.linkButton}
           >
-            {mode === "login" ? "Register" : "Login"}
+            {mode === "login"
+              ? "Register"
+              : "Login"}
           </button>
         </p>
 
-        {error && <p style={styles.error}>{error}</p>}
-        {message && <p style={styles.success}>{message}</p>}
+        {error && (
+          <p style={styles.error}>
+            {error}
+          </p>
+        )}
+
+        {message && (
+          <p style={styles.success}>
+            {message}
+          </p>
+        )}
       </div>
     </div>
   );

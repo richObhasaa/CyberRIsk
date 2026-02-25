@@ -1,19 +1,17 @@
 "use client";
 
-import { supabase } from "./supabaseClient";
+import { getAccessToken } from "./auth";
 
 const BASE_URL = "http://localhost:5000/api";
 
 async function getTokenSafe() {
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  const token = getAccessToken();
 
-  if (!session?.access_token) {
+  if (!token) {
     throw new Error("No active session");
   }
 
-  return session.access_token;
+  return token;
 }
 
 async function request(
@@ -28,8 +26,7 @@ async function request(
     {
       method,
       headers: {
-        "Content-Type":
-          "application/json",
+        "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
       body: body
@@ -41,10 +38,7 @@ async function request(
   const data = await res.json();
 
   if (!res.ok) {
-    console.error(
-      "Backend error:",
-      data
-    );
+    console.error("Backend error:", data);
     throw new Error(
       data.error || "Backend error"
     );
@@ -91,7 +85,7 @@ export const getDrafts = () =>
   );
 
 /* ===========================
-   NEW FUNCTIONS (DITAMBAHKAN)
+   NEW FUNCTIONS
 =========================== */
 
 export const createAssessment = (
@@ -147,3 +141,14 @@ export const listByOrganization =
     request(
       `/assessment/${organizationId}/list`
     );
+
+export const generateSummary = (
+  payload: {
+    assessment_id: string;
+  }
+) =>
+  request(
+    "/assessment/generate-summary",
+    "POST",
+    payload
+  );

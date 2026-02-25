@@ -1,11 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { createClient } from "@supabase/supabase-js";
-import { ENV } from "../config/env";
+import { supabase } from "../db/supabase";
 
-const supabase = createClient(
-  ENV.SUPABASE_URL,
-  ENV.SUPABASE_KEY
-);
+const supabaseClient = supabase;
 
 export async function verifyToken(
   req: Request,
