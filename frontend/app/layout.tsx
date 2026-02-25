@@ -9,19 +9,11 @@ export default function RootLayout({
 }) {
   const { loading } = useRequireAuth();
 
-  if (loading) {
-    return (
-      <html lang="en">
-        <body style={{ background: "#111", color: "white" }}>
-          Checking authentication...
-        </body>
-      </html>
-    );
-  }
-
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body style={{ background: "#111", color: "white" }}>
+        {loading ? "Checking authentication..." : children}
+      </body>
     </html>
   );
 }

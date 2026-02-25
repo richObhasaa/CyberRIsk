@@ -14,10 +14,24 @@ export async function submitSubcategory(
     answers,
     inherent_likelihood,
     inherent_impact,
+    user_id,
   } = payload;
 
   if (!answers?.length)
     throw new Error("Answers required");
+
+  // CHECK LOCK
+  const { data: assessment } = await supabase
+    .from("assessments")
+    .select("status, organization_id")
+    .eq("id", assessment_id)
+    .single();
+
+  if (!assessment)
+    throw new Error("Assessment not found");
+
+  if (assessment.status === "finalized")
+    throw new Error("Assessment is locked (finalized)");
 
   const questionIds = answers.map(
     (a: any) => a.question_id
@@ -53,7 +67,7 @@ export async function submitSubcategory(
     maturity
   );
 
-  const { data, error: upsertError } =
+  const { error: upsertError } =
     await supabase
       .from("assessment_subcategory_results")
       .upsert({
@@ -65,16 +79,25 @@ export async function submitSubcategory(
         maturity_level: maturity,
         residual_score: residual,
         control_effectiveness: maturity / 5,
-      })
-      .select();
+      });
 
   if (upsertError)
     throw new Error(upsertError.message);
 
-  return {
-    maturity,
-    inherent,
-    residual,
-    data,
-  };
+  // AUDIT
+  await supabase.from("audit_logs").insert({
+    user_id,
+    organization_id: assessment.organization_id,
+    assessment_id,
+    event_type: "SUBCATEGORY_SUBMITTED",
+    user_input: JSON.stringify(payload),
+    ai_output: {
+      maturity,
+      inherent,
+      residual,
+    },
+    model_version: "v1",
+  });
+
+  return { maturity, inherent, residual };
 }

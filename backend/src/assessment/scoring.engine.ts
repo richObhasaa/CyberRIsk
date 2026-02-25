@@ -38,3 +38,10 @@ export function calculateResidual(
     (inherent * (1 - controlFactor)).toFixed(2)
   );
 }
+
+export function classifyRiskTier(score: number) {
+  if (score <= 5) return "LOW";
+  if (score <= 10) return "MEDIUM";
+  if (score <= 15) return "HIGH";
+  return "CRITICAL";
+}

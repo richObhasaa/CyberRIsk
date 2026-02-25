@@ -27,7 +27,7 @@ export async function verifyToken(
     (req as any).user = data.user;
 
     next();
-  } catch (err) {
+  } catch {
     return res.status(401).json({ error: "Unauthorized" });
   }
 }
