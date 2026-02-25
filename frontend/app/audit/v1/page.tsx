@@ -10,7 +10,10 @@ export default function FormPage() {
         email: "",
         companyName: "",
         companyEmail: "",
+        test: 0,
     });
+
+
 
     return (
         <>
@@ -30,7 +33,7 @@ export default function FormPage() {
                     <div className="hidden md:block absolute pointer-events-none inset-y-0 right-0 w-60 bg-gradient-to-l from-black to-transparent" />
                 </div>
                 <form action="" method="post" onSubmit={(e) => e.preventDefault()}>
-                    <div className="flex flex-col w-full max-w-7xl mx-auto py-10 gap-5 md:gap-15">
+                    <div className="flex flex-col w-full max-w-7xl mx-auto py-10 gap-5 md:gap-15 border-b-2 border-white/10">
                         <div className="flex justify-center text-center">
                             <p className="text-2xl font-bold">User Requirements</p>
                         </div>
@@ -60,13 +63,27 @@ export default function FormPage() {
                                 onChange={(value) => setFormData(prev => ({ ...prev, companyEmail: value }))}
                             />
                         </div>
-                        <div className="flex justify-center px-6 sm:px-12 lg:px-24">
-                            <button className="w-full max-w-[300px] bg-white border border-transparent 
+                    </div>
+                    <div className="flex flex-col w-full max-w-7xl mx-auto py-10 gap-5 md:gap-15 border-b-2 border-white/10">
+                        <div className="flex justify-center text-center">
+                            <p className="text-2xl font-bold">User Requirements</p>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 sm:px-12 lg:px-24">
+                            <RangeInput
+                                label="Test Range Input"
+                                value={formData.test}
+                                onChange={(value) => setFormData(prev => ({ ...prev, test: value }))}
+                                min={1}
+                                max={5}
+                                labels={["None", "Low", "Medium", "High", "Critical"]}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex justify-center px-6 sm:px-12 lg:px-24">
+                        <button className="mt-10 w-full max-w-[300px] bg-white border border-transparent 
                         hover:border-white/50 hover:bg-transparent text-black hover:text-white 
                         font-bold py-3 rounded-2xl transition-all duration-300 
                         shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] active:scale-95 cursor-pointer">Submit</button>
-                        </div>
-
                     </div>
                 </form>
             </div>

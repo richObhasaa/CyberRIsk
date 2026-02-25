@@ -152,6 +152,7 @@ interface RangeInputProps {
     onChange: (value: number) => void;
     min?: number;
     max?: number;
+    labels?: string[];
     className?: string;
 }
 
@@ -161,6 +162,7 @@ export const RangeInput: React.FC<RangeInputProps> = ({
     onChange,
     min = 0,
     max = 100,
+    labels,
     className = "",
 }) => {
     const percentage = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
@@ -188,10 +190,30 @@ export const RangeInput: React.FC<RangeInputProps> = ({
                     }}
                 />
             </div>
-            <div className="flex justify-between text-[10px] text-gray-600 font-bold uppercase tracking-tighter px-1">
-                <span>{min}</span>
-                <span>{max}</span>
-            </div>
+
+            {/* Labels row — replaces min/max if provided */}
+            {labels && labels.length > 0 ? (
+                <div className="relative flex justify-between px-1">
+                    {labels.map((l, i) => {
+                        const pos = i / (labels.length - 1) * 100;
+                        const isActive = percentage >= pos - 0.5;
+                        return (
+                            <span
+                                key={i}
+                                className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-300 text-center ${isActive ? "text-[#B19EEF]" : "text-gray-600"
+                                    }`}
+                            >
+                                {l}
+                            </span>
+                        );
+                    })}
+                </div>
+            ) : (
+                <div className="flex justify-between text-[10px] text-gray-600 font-bold uppercase tracking-tighter px-1">
+                    <span>{min}</span>
+                    <span>{max}</span>
+                </div>
+            )}
         </div>
     );
 };

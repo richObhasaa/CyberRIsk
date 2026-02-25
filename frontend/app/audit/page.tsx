@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import ContentSection from "../layouts/ContentSection";
+import TooltipButton from "../components/TooltipButton";
 
 export default function FormPage() {
     const [formData, setFormData] = useState({
@@ -29,16 +30,18 @@ export default function FormPage() {
                 <div className="fade-in flex flex-col w-full max-w-7xl px-20 mx-auto pt-0 pb-5 gap-10">
                     <p className="text-center text-2xl font-bold">Choose the report type</p>
                     <div className="flex flex-row gap-10 justify-center">
-                        <button onClick={() => window.location.href = "/audit/v1"}
-                            className="w-full max-w-[300px] bg-white border border-transparent 
-                                            hover:border-white/50 hover:bg-transparent text-black hover:text-white 
-                                            font-bold py-4 rounded-2xl transition-all duration-300 
-                                            shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] mt-4 active:scale-95 cursor-pointer">IT/Technical Users</button>
-                        <button onClick={() => window.location.href = "/audit/v2"}
-                            className="w-full max-w-[300px] bg-white border border-transparent 
-                                                hover:border-white/50 hover:bg-transparent text-black hover:text-white 
-                                                font-bold py-4 rounded-2xl transition-all duration-300 
-                                                shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] mt-4 active:scale-95 cursor-pointer">Non-Technical Users</button>
+                        <TooltipButton
+                            href="/audit/v1"
+                            label="IT/Technical Users"
+                            title="IT / Technical Users"
+                            description="For system administrators, developers, and IT staff who manage infrastructure and technical operations."
+                        />
+                        <TooltipButton
+                            href="/audit/v2"
+                            label="Non-Technical Users"
+                            title="Non-Technical Users"
+                            description="For general staff and business users with no technical background who use day-to-day applications."
+                        />
                     </div>
                 </div>
                 {/* Bottom fade */}
