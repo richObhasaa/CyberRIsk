@@ -32,8 +32,8 @@ export default function Navbar() {
                     <a href="#features" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
                         Manual
                     </a>
-                    <a href="#pricing" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
-                        Contact
+                    <a href="/form" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                        Form
                     </a>
                     <button className="px-4 py-2 rounded-full bg-white text-black text-sm font-medium border border-transparent hover:bg-transparent hover:text-white hover:border-white transition-colors">
                         Get Started

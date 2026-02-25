@@ -14,7 +14,6 @@ import BentoGrid from "./layouts/BentoGrid";
 export default function Home() {
     return (
         <>
-            <Navbar />
             <div className="h-screen w-full relative overflow-hidden">
                 {/* Background Layer */}
                 <div className="absolute h-screen w-full inset-0 z-0 text-white fade-in">
@@ -39,7 +38,7 @@ export default function Home() {
                             colors={["#ffffff", "#a09eff", "#6f3be8"]}
                             animationSpeed={8}
                             showBorder={false}
-                            className="text-5xl md:text-7xl font-bold tracking-tight"
+                            className="text-6xl md:text-7xl font-bold tracking-tight"
                         >
                             CyberRisk
                         </GradientText>

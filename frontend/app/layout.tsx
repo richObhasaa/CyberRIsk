@@ -21,6 +21,7 @@ export default function RootLayout({
     return (
         <html lang="en" className="dark">
             <body className={`${inter.variable} font-inter antialiased bg-[#020403] text-white`}>
+                <Navbar />
                 {children}
             </body>
         </html>
