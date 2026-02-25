@@ -8,8 +8,9 @@ import RowLayout from "./layouts/RowLayout";
 import StatsSection from "./layouts/StatsSection";
 import FeatureSection from "./layouts/FeatureSection";
 import ContentSection from "./layouts/ContentSection";
-
 import BentoGrid from "./layouts/BentoGrid";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
     return (

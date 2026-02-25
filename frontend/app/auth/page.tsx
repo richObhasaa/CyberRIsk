@@ -2,6 +2,8 @@
 
 import { TextInput, PasswordInput, EmailInput } from "../components/formComponents";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { login, register, resendConfirmation } from "../lib/auth";
 
 export default function AuthPage() {
 
@@ -10,6 +12,32 @@ export default function AuthPage() {
     const [password, setPassword] = useState("");
     const [mode, setMode] = useState<"login" | "register">("login");
     const [animKey, setAnimKey] = useState(0);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
+    const router = useRouter();
+
+    async function handleSubmit(event: React.FormEvent) {
+        event.preventDefault();
+        setError("");
+        setMessage("");
+        setLoading(true);
+
+        try {
+            if (mode === "login") {
+                await login(email, password);
+                router.replace("/urltest");
+            } else {
+                await register(email, password);
+                setMessage("Registration successful. Check your email to confirm.");
+                setMode("login");
+            }
+        } catch (err: any) {
+            setError(err.message || "Something went wrong");
+        } finally {
+            setLoading(false);
+        }
+    }
 
     useEffect(() => {
         const handleHashChange = () => {
@@ -41,7 +69,7 @@ export default function AuthPage() {
                     {mode === "login" ? "Welcome Back" : "Create Account"}
                 </h1>
 
-                <form action="" method="post" className="w-full space-y-5">
+                <form onSubmit={handleSubmit} className="w-full space-y-5">
 
                     {/* Name field slides in when registering */}
                     <div
@@ -84,8 +112,9 @@ export default function AuthPage() {
                         <button
                             className="w-full bg-white hover:bg-gray-200 text-black font-bold py-4 rounded-2xl transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] mt-4 active:scale-95"
                             type="submit"
+                            disabled={loading}
                         >
-                            {mode === "register" ? "Register" : "Sign In"}
+                            {loading ? "Loading..." : mode === "register" ? "Register" : "Sign In"}
                         </button>
                     </div>
 
@@ -102,6 +131,9 @@ export default function AuthPage() {
                         <a href="/forgot-password" title="Coming soon" className="text-gray-500 hover:text-gray-300 transition-colors duration-300 text-xs">
                             Forgot your password?
                         </a>
+
+                        {error && <p>{error}</p>}
+                        {message && <p>{message}</p>}
                     </div>
                 </form>
             </div>
@@ -113,3 +145,15 @@ export default function AuthPage() {
         </div>
     );
 }
+
+{/*async function handleResend() {
+    setError("");
+    setMessage("");
+
+    try {
+      await resendConfirmation(email);
+      setMessage("Confirmation email sent again.");
+    } catch (err: any) {
+      setError(err.message);
+    }
+  } */}
