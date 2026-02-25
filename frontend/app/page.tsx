@@ -92,32 +92,6 @@ export default function Home() {
                 reverse={true}
             />
 
-            <StatsSection
-                title="Proven Track Record"
-                stats={[
-                    {
-                        label: "Threats Blocked",
-                        value: "2M+",
-                        description: "Monthly average",
-                    },
-                    {
-                        label: "Risk Reduction",
-                        value: "68%",
-                        description: "After 3 months",
-                    },
-                    {
-                        label: "Detection Time",
-                        value: "< 1s",
-                        description: "Industry leading",
-                    },
-                    {
-                        label: "Global Uptime",
-                        value: "99.99%",
-                        description: "SLA Guaranteed",
-                    },
-                ]}
-            />
-
             <ContentSection
                 title="Ready to Secure Your Future?"
                 subtitle="Join the Elite"

@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface StatItem {
-    label: string;
+    label?: string;
     value: string;
     description?: string;
 }
@@ -13,10 +13,10 @@ interface StatsSectionProps {
 
 const StatsSection: React.FC<StatsSectionProps> = ({ title, stats }) => {
     return (
-        <section className="bg-black text-white py-20 px-6 sm:px-12 lg:px-24">
+        <section className="bg-transparent text-white px-6 sm:px-12 lg:px-24">
             <div className="max-w-7xl mx-auto">
                 {title && (
-                    <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 fade-in">
+                    <h2 className={`${title ? "" : "hidden disabled"} text-3xl md:text-4xl font-bold text-center mb-16 fade-in`}>
                         {title}
                     </h2>
                 )}
@@ -24,16 +24,16 @@ const StatsSection: React.FC<StatsSectionProps> = ({ title, stats }) => {
                     {stats.map((stat, index) => (
                         <div
                             key={index}
-                            className="flex flex-col items-center p-8 rounded-2xl glass-card border border-white/5 bg-white/[0.02] text-center transition-transform hover:scale-105"
+                            className="flex flex-col items-center p-8 rounded-2xl border border-white/5 bg-white/[0.05] text-center transition-transform hover:scale-105"
                         >
-                            <span className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-white to-gray-500 bg-clip-text text-transparent mb-2">
+                            <span className="text-4xl md:text-5xl font-bold text-white mb-2">
                                 {stat.value}
                             </span>
-                            <span className="text-cyan-400 font-medium uppercase tracking-widest text-xs mb-3">
+                            <span className="text-[#B19EEF] font-medium uppercase tracking-widest text-xs mb-2">
                                 {stat.label}
                             </span>
                             {stat.description && (
-                                <p className="text-gray-500 text-sm">
+                                <p className="text-[#B19EEF] font-bold uppercase tracking-widest text-xs fade-in">
                                     {stat.description}
                                 </p>
                             )}

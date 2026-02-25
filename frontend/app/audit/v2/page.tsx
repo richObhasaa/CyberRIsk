@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import ContentSection from "../layouts/ContentSection";
-import { RangeInput, SelectInput, TextInput, BigTextInput } from "../components/formComponents";
+import ContentSection from "../../layouts/ContentSection";
+import { RangeInput, SelectInput, TextInput, BigTextInput } from "../../components/formComponents";
 
 export default function FormPage() {
     const [formData, setFormData] = useState({
@@ -63,6 +63,7 @@ export default function FormPage() {
                                 onChange={(value) => setFormData(prev => ({ ...prev, report: value }))}
                             />
                         </div>
+                        <button className="w-full bg-white border border-transparent hover:border-white/50 hover:bg-transparent text-black hover:text-white font-bold py-4 rounded-2xl transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] mt-4 active:scale-95">Submit</button>
                     </form>
                 </div>
             </div>

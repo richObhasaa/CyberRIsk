@@ -33,6 +33,54 @@ export const TextInput: React.FC<TextInputProps> = ({
     );
 };
 
+export const PasswordInput: React.FC<TextInputProps> = ({
+    label,
+    placeholder,
+    value,
+    onChange,
+    type = "password",
+    className = "",
+}) => {
+    return (
+        <div className={`flex flex-col gap-2 w-full ${className}`}>
+            <label className="text-sm font-semibold text-gray-400 ml-1 tracking-wide">
+                {label}
+            </label>
+            <input
+                type={type}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+                className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card"
+            />
+        </div>
+    );
+};
+
+export const EmailInput: React.FC<TextInputProps> = ({
+    label,
+    placeholder,
+    value,
+    onChange,
+    type = "email",
+    className = "",
+}) => {
+    return (
+        <div className={`flex flex-col gap-2 w-full ${className}`}>
+            <label className="text-sm font-semibold text-gray-400 ml-1 tracking-wide">
+                {label}
+            </label>
+            <input
+                type={type}
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                placeholder={placeholder}
+                className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card"
+            />
+        </div>
+    );
+};
+
 export const BigTextInput: React.FC<TextInputProps> = ({
     label,
     placeholder,

@@ -18,7 +18,7 @@ const ContentSection: React.FC<ContentSectionProps> = ({
     centered = true
 }) => {
     return (
-        <section className={`bg-transparent text-white py-5 px-6 sm:px-12 lg:px-24 ${className}`}>
+        <section className={`bg-transparent text-white py-5 !pb-0 px-6 sm:px-12 lg:px-24 ${className}`}>
             <div className={`max-w-4xl mx-auto ${centered ? 'text-center' : ''}`}>
                 {subtitle && (
                     <span className="text-[#B19EEF] font-semibold tracking-widest uppercase text-xs mb-4 block">

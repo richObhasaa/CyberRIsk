@@ -1,7 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export default function Navbar() {
+interface NavbarProps {
+    mode: "short" | "long" | "hidden" | null;
+}
+
+export default function Navbar({ mode }: NavbarProps) {
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -19,23 +23,20 @@ export default function Navbar() {
     }, []);
 
     return <>
-        <div className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 transition-all duration-300">
-            <nav className={`inline-flex items-center border border-white/[0.08] bg-white/[0.02] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-500 motion-reduce:duration-1 rounded-full ${scrolled ? "py-2 px-2 gap-15" : "py-2 px-2 gap-250"}`}>
-                <div className="flex flex-1 items-center justify-start gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cyan-400 to-purple-500 flex items-center justify-center">
-                        <span className="text-white font-bold text-lg">C</span>
-                    </div>
+        <div className={`${mode === "hidden" ? "hidden" : ""} fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 transition-all duration-300`}>
+            <nav className={`inline-flex items-center border border-white/[0.08] bg-white/[0.02] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-500 motion-reduce:duration-1 rounded-full ${scrolled || (mode !== null && mode === "short") ? "py-2 px-4 gap-15" : "py-2 px-2 gap-250"}`}>
+                <div className="flex flex-1 items-center justify-start gap-2 px-4">
+                    <img src="/vercel.svg" alt="Logo" className="w-7 h-auto" />
                 </div>
-
                 {/* Middle: Links */}
-                <div className="hidden md:flex items-center gap-6">
+                <div className={`hidden ${(mode !== null && mode === "short") ? "md:hidden" : "md:flex"} items-center gap-6`}>
                     <a href="#features" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
                         Manual
                     </a>
-                    <a href="/form" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
-                        Form
+                    <a href="/audit" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                        Audit Form
                     </a>
-                    <button className="px-4 py-2 rounded-full bg-white text-black text-sm font-medium border border-transparent hover:bg-transparent hover:text-white hover:border-white transition-colors">
+                    <button onClick={() => window.location.href = "/auth#login"} className="px-4 py-2 rounded-full bg-white text-black text-sm font-medium border border-transparent hover:bg-transparent hover:text-white hover:border-white transition-colors">
                         Get Started
                     </button>
                 </div>
