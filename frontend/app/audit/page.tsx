@@ -3,8 +3,12 @@
 import { useState } from "react";
 import ContentSection from "../layouts/ContentSection";
 import TooltipButton from "../components/TooltipButton";
+import { useRequireAuth } from "../lib/useRequireAuth";
 
 export default function FormPage() {
+
+    const { loading } = useRequireAuth();
+
     const [formData, setFormData] = useState({
         name: "",
         email: "",
