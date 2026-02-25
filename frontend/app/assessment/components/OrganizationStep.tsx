@@ -1,11 +1,11 @@
+"use client";
+
 import { useState } from "react";
 import { Container, Button, Input } from "./UI";
 
 export default function OrganizationStep({
   organizations,
-  setSelectedOrg,
-  setStep,
-  role,
+  onSelect,
   createOrganization,
 }: any) {
   const [newOrgName, setNewOrgName] = useState("");
@@ -14,18 +14,22 @@ export default function OrganizationStep({
     <Container>
       <h2>Select Organization</h2>
 
-      {organizations.map((org: any) => (
-        <div key={org.organizations.id}>
-          <Button
-            onClick={() => {
-              setSelectedOrg(org.organizations);
-              setStep(role === "IT" ? 3 : 4);
-            }}
-          >
-            {org.organizations.name}
-          </Button>
-        </div>
-      ))}
+      {organizations.map((item: any, index: number) => {
+        const org =
+          item?.organizations ||
+          item?.organization ||
+          item;
+
+        if (!org?.id) return null;
+
+        return (
+          <div key={org.id || index} style={{ marginBottom: 12 }}>
+            <Button onClick={() => onSelect(org)}>
+              {org.name}
+            </Button>
+          </div>
+        );
+      })}
 
       <hr style={{ margin: "30px 0" }} />
 
@@ -39,12 +43,16 @@ export default function OrganizationStep({
 
       <Button
         onClick={async () => {
-          if (!newOrgName) return alert("Name required");
+          if (!newOrgName.trim()) return;
 
           const res = await createOrganization({ name: newOrgName });
 
-          setSelectedOrg(res.organization);
-          setStep(role === "IT" ? 3 : 4);
+          if (!res?.organization?.id) {
+            alert("Failed creating organization.");
+            return;
+          }
+
+          onSelect(res.organization);
         }}
       >
         Create

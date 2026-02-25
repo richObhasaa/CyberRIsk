@@ -10,41 +10,42 @@ const router = express.Router();
 /* =====================================================
    🔥 NEW — CREATE ASSESSMENT
 ===================================================== */
-router.post(
-  "/create",
-  verifyToken,
-  async (req, res) => {
-    try {
-      const user = (req as any).user;
-      const { organization_id, assessment_type } =
-        req.body;
+router.post("/create", verifyToken, async (req, res) => {
+  try {
+    const { organization_id, assessment_type } = req.body;
 
-      if (!organization_id || !assessment_type)
-        return res.status(400).json({
-          error:
-            "organization_id and assessment_type required",
-        });
-
-      const { data: assessment } = await supabase
-        .from("assessments")
-        .insert({
-          organization_id,
-          assessment_type,
-          created_by: user.id,
-          status: "draft",
-        })
-        .select()
-        .single();
-
-      res.json({
-        success: true,
-        assessment,
+    if (!organization_id || !assessment_type) {
+      return res.status(400).json({
+        error: "Missing organization_id or assessment_type",
       });
-    } catch (err: any) {
-      res.status(500).json({ error: err.message });
     }
+
+    const { data, error } = await supabase
+      .from("assessments")
+      .insert([
+        {
+          organization_id,
+          mode: assessment_type,   // ← PENTING: kolomnya MODE
+          status: "draft",
+        },
+      ])
+      .select()
+      .single();
+
+    if (error) {
+      console.error("CREATE ASSESSMENT ERROR:", error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.json({
+      success: true,
+      assessment: data,
+    });
+  } catch (err: any) {
+    console.error("SERVER ERROR:", err);
+    return res.status(500).json({ error: err.message });
   }
-);
+});
 
 /* =====================================================
    🔥 NEW — GET QUESTIONS BY ROLE

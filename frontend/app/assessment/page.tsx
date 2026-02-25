@@ -5,6 +5,7 @@ import {
   getMyOrganizations,
   createOrganization,
   getQuestions,
+  createAssessment,
   submitSubcategory,
 } from "../lib/api";
 
@@ -16,29 +17,24 @@ import QuestionsStep from "./components/QuestionsStep";
 export default function AssessmentPage() {
   const [step, setStep] = useState(1);
   const [role, setRole] = useState<"IT" | "NON_IT" | null>(null);
+
   const [organizations, setOrganizations] = useState<any[]>([]);
   const [selectedOrg, setSelectedOrg] = useState<any>(null);
+  const [assessmentId, setAssessmentId] = useState<string | null>(null);
+
   const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const [riskProfile, setRiskProfile] = useState({
     operational_likelihood: 3,
     operational_impact: 3,
-    financial_likelihood: 3,
-    financial_impact: 3,
-    compliance_likelihood: 3,
-    compliance_impact: 3,
-    reputation_likelihood: 3,
-    reputation_impact: 3,
-    strategic_likelihood: 3,
-    strategic_impact: 3,
   });
 
   /* LOAD ORGANIZATIONS */
   useEffect(() => {
     async function load() {
       const res = await getMyOrganizations();
-      setOrganizations(res.organizations || []);
+      setOrganizations(res?.organizations || []);
     }
     load();
   }, []);
@@ -50,14 +46,54 @@ export default function AssessmentPage() {
     async function load() {
       setLoading(true);
       const res = await getQuestions(role);
-      setQuestions(res.questions || []);
+      setQuestions(res?.questions || []);
       setLoading(false);
     }
 
     load();
   }, [step, role]);
 
-  /* ROUTING STEP */
+  /* HANDLE ORGANIZATION SELECT */
+  async function handleOrganizationSelect(item: any) {
+    // Supabase join format safety
+    const org =
+      item?.organizations ||
+      item?.organization ||
+      item;
+
+    if (!org?.id) {
+      console.error("Invalid organization object:", item);
+      return;
+    }
+
+    if (!role) {
+  alert("Role not selected.");
+  return;
+}
+
+    setSelectedOrg(org);
+
+    const res = await createAssessment({
+      organization_id: org.id,
+      assessment_type: role,
+    });
+
+    if (!res?.assessment?.id) {
+      alert("Failed to create assessment.");
+      return;
+    }
+
+    setAssessmentId(res.assessment.id);
+
+    if (role === "IT") {
+      setStep(3);
+    } else {
+      setStep(4);
+    }
+  }
+
+  /* ROUTING */
+
   if (step === 1)
     return <RoleStep setRole={setRole} setStep={setStep} />;
 
@@ -65,9 +101,7 @@ export default function AssessmentPage() {
     return (
       <OrganizationStep
         organizations={organizations}
-        setSelectedOrg={setSelectedOrg}
-        setStep={setStep}
-        role={role}
+        onSelect={handleOrganizationSelect}
         createOrganization={createOrganization}
       />
     );
@@ -87,9 +121,9 @@ export default function AssessmentPage() {
       <QuestionsStep
         questions={questions}
         loading={loading}
-        selectedOrg={selectedOrg}
         riskProfile={riskProfile}
         submitSubcategory={submitSubcategory}
+        assessmentId={assessmentId}
       />
     );
 
