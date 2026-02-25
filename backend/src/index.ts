@@ -1,28 +1,10 @@
-import express from "express";
-import cors from "cors";
-import { ENV } from "./config/env";
-import healthRouter from "./routes/health";
-import testRouter from "./routes/test";
+import dotenv from "dotenv";
+dotenv.config();
 
-const app = express();
+import app from "./app";
 
-// ── Middleware ──────────────────────────────────────────────
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+const PORT = process.env.PORT || 4000;
 
-// ── Routes ──────────────────────────────────────────────────
-app.use("/api/health", healthRouter);
-app.use("/api/test", testRouter);
-
-// ── 404 Fallback ────────────────────────────────────────────
-app.use((_req, res) => {
-    res.status(404).json({ success: false, message: "Route not found" });
+app.listen(PORT, () => {
+  console.log(`✅ CyberRisk API running on http://localhost:${PORT}`);
 });
-
-// ── Start Server ────────────────────────────────────────────
-app.listen(ENV.PORT, () => {
-    console.log(`✅ CyberRisk API running on http://localhost:${ENV.PORT}`);
-});
-
-export default app;
