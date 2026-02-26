@@ -19,7 +19,7 @@ const ListLayout: React.FC<ListLayoutProps> = ({
     items,
 }) => {
     return (
-        <section className="bg-transparent text-white px-6 sm:px-12 lg:px-24">
+        <section className="bg-transparent text-white px-6 sm:px-12 lg:px-24 fade-in">
             <div className="max-w-7xl mx-auto">
                 {(title || subtitle) && (
                     <div className="mb-5 space-y-0">

@@ -20,7 +20,7 @@ const StatsSection: React.FC<StatsSectionProps> = ({ title, stats }) => {
                         {title}
                     </h2>
                 )}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 fade-in">
                     {stats.map((stat, index) => (
                         <div
                             key={index}

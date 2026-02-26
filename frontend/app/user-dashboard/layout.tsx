@@ -1,6 +1,6 @@
-import AdminMainPage from "./page";
+import UserMainPage from "./page";
 
-function AdminLayout({ children }: { children: React.ReactNode }) {
+function UserLayout({ children }: { children: React.ReactNode }) {
     return (
         <>
             <div className="h-screen w-full flex flex-row overflow-hidden">
@@ -37,11 +37,11 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
     );
 }
 
-export default function AdminPage() {
+export default function UserPage() {
     return (
-        <AdminLayout
+        <UserLayout
             children={
-                <AdminMainPage />
+                <UserMainPage />
             }
         />
     );
