@@ -4,6 +4,9 @@ import { getAccessToken, refreshAccessToken } from "./auth";
 
 const BASE_URL = "http://localhost:4000/api";
 
+export const addAsset = (payload: any) =>
+  request("/assessment/add-asset", "POST", payload);
+
 async function getTokenSafe() {
   const token = getAccessToken();
 

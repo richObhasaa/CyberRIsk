@@ -12,23 +12,58 @@ const router = express.Router();
 ===================================================== */
 router.post("/create", verifyToken, async (req, res) => {
   try {
-    const { organization_id, assessment_type } = req.body;
+    const user = (req as any).user;
 
-    if (!organization_id || !assessment_type) {
+    const {
+      organization_id,
+      assessment_type,
+      period_start,
+      period_end
+    } = req.body;
+
+    // ✅ VALIDASI WAJIB
+    if (!organization_id || !assessment_type || !period_start || !period_end) {
       return res.status(400).json({
-        error: "Missing organization_id or assessment_type",
+        error: "organization_id, assessment_type, period_start, period_end required"
       });
     }
 
+    // ✅ VALIDASI RANGE
+    if (new Date(period_start) > new Date(period_end)) {
+      return res.status(400).json({
+        error: "period_start cannot be after period_end"
+      });
+    }
+
+    // ✅ CEK OVERLAP
+    const { data: existing, error: overlapError } = await supabase
+      .from("assessments")
+      .select("id, period_start, period_end")
+      .eq("organization_id", organization_id)
+      .lte("period_start", period_end)
+      .gte("period_end", period_start);
+
+    if (overlapError) {
+      return res.status(500).json({ error: overlapError.message });
+    }
+
+    if (existing && existing.length > 0) {
+      return res.status(400).json({
+        error: "Assessment period overlaps with existing assessment",
+        conflict: existing
+      });
+    }
+
+    // ✅ INSERT ASSESSMENT
     const { data, error } = await supabase
       .from("assessments")
-      .insert([
-        {
-          organization_id,
-          mode: assessment_type,   // ← PENTING: kolomnya MODE
-          status: "draft",
-        },
-      ])
+      .insert({
+        organization_id,
+        mode: assessment_type,
+        period_start,
+        period_end,
+        status: "draft"
+      })
       .select()
       .single();
 
@@ -39,8 +74,9 @@ router.post("/create", verifyToken, async (req, res) => {
 
     return res.json({
       success: true,
-      assessment: data,
+      assessment: data
     });
+
   } catch (err: any) {
     console.error("SERVER ERROR:", err);
     return res.status(500).json({ error: err.message });
@@ -555,6 +591,54 @@ router.post(
 );
 // AGGREGATE + SUMMARY
 
+//aset
+router.post("/add-asset", verifyToken, async (req, res) => {
+  try {
+    const {
+      assessment_id,
+      asset_name,
+      owner,
+      location,
+      asset_type,
+      cia_level,
+    } = req.body;
+
+    if (!assessment_id || !asset_name) {
+      return res.status(400).json({
+        error: "assessment_id and asset_name required",
+      });
+    }
+
+    const { data, error } = await supabase
+      .from("assessment_assets")
+      .insert({
+        assessment_id,
+        asset_name,
+        owner,
+        location,
+        asset_type,
+        cia_level,
+      })
+      .select()
+      .single();
+
+    if (error) {
+      return res.status(500).json({
+        error: error.message,
+      });
+    }
+
+    return res.json({
+      success: true,
+      asset: data,
+    });
+  } catch (err: any) {
+    return res.status(500).json({
+      error: err.message,
+    });
+  }
+});
+
 router.post("/generate-summary", verifyToken, async (req, res) => {
   try {
     const { assessment_id } = req.body;
@@ -591,19 +675,32 @@ router.post("/generate-summary", verifyToken, async (req, res) => {
     else if (avgResidual > 5) riskTier = "MEDIUM";
 
     /* AI SUMMARY (BASIC VERSION) */
-    const aiSummary = `
-This assessment indicates an overall maturity level of ${avgMaturity.toFixed(
-      2
-    )} out of 5.
-The calculated residual risk score is ${avgResidual.toFixed(
-      2
-    )}, placing the organization in the ${riskTier} risk tier.
+const aiSummary = `
+=== OFFICIAL AI RISK ASSESSMENT REPORT ===
 
-Strength areas reflect moderate implementation of cybersecurity controls,
-while certain domains may require further investment to reduce residual exposure.
+Assessment Period:
+${period_start} to ${period_end}
 
-Recommended next steps include strengthening governance oversight,
-enhancing monitoring controls, and improving incident response maturity.
+Maturity Score (1-5 scale):
+${avgMaturity.toFixed(2)}
+
+Residual Risk Score:
+${avgResidual.toFixed(2)}
+
+Risk Tier Classification:
+${riskTier}
+
+Interpretation:
+Based on the calculated maturity and residual exposure,
+the organization currently operates within the ${riskTier} risk band.
+
+Higher maturity reduces residual exposure.
+Current control effectiveness indicates ${((avgMaturity / 5) * 100).toFixed(1)}% control strength.
+
+Recommendations:
+- Improve weakest maturity domains
+- Reduce inherent risk exposure
+- Strengthen governance oversight
 `;
 
     /* UPDATE ASSESSMENT TABLE */

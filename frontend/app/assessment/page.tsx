@@ -13,6 +13,7 @@ import RoleStep from "./components/RoleStep";
 import OrganizationStep from "./components/OrganizationStep";
 import RiskProfileStep from "./components/RiskProfileStep";
 import QuestionsStep from "./components/QuestionsStep";
+import AssetStep from "./components/AssetStep";
 
 export default function AssessmentPage() {
   const [step, setStep] = useState(1);
@@ -39,9 +40,9 @@ export default function AssessmentPage() {
     load();
   }, []);
 
-  /* LOAD QUESTIONS */
+  /* LOAD QUESTIONS — ONLY WHEN ENTERING STEP 5 */
   useEffect(() => {
-    if (step !== 4 || !role) return;
+    if (step !== 5 || !role) return;
 
     async function load() {
       setLoading(true);
@@ -53,49 +54,54 @@ export default function AssessmentPage() {
     load();
   }, [step, role]);
 
-  /* HANDLE ORGANIZATION SELECT */
+  /* HANDLE ORG SELECT */
   async function handleOrganizationSelect(item: any) {
-    // Supabase join format safety
-    const org =
-      item?.organizations ||
-      item?.organization ||
-      item;
+    const org = item?.organizations || item?.organization || item;
 
-    if (!org?.id) {
-      console.error("Invalid organization object:", item);
-      return;
-    }
+    if (!org?.id) return;
+    if (!role) return alert("Role not selected.");
 
-    if (!role) {
-  alert("Role not selected.");
-  return;
-}
+    const periodStart = prompt("Enter period start (YYYY-MM-DD)");
+    const periodEnd = prompt("Enter period end (YYYY-MM-DD)");
 
-    setSelectedOrg(org);
+    if (!periodStart || !periodEnd)
+      return alert("Period start and end required.");
 
     const res = await createAssessment({
       organization_id: org.id,
       assessment_type: role,
+      period_start: periodStart,
+      period_end: periodEnd,
     });
 
-    if (!res?.assessment?.id) {
-      alert("Failed to create assessment.");
-      return;
-    }
+    if (!res?.assessment?.id)
+      return alert("Failed to create assessment.");
 
+    setSelectedOrg(org);
     setAssessmentId(res.assessment.id);
 
-    if (role === "IT") {
-      setStep(3);
-    } else {
-      setStep(4);
-    }
+    setStep(3); // GO TO ASSET FIRST
+  }
+
+  /* STEP NAVIGATION HELPERS */
+
+  function nextStep() {
+    setStep((prev) => prev + 1);
+  }
+
+  function prevStep() {
+    setStep((prev) => (prev > 1 ? prev - 1 : 1));
   }
 
   /* ROUTING */
 
   if (step === 1)
-    return <RoleStep setRole={setRole} setStep={setStep} />;
+    return (
+      <RoleStep
+        setRole={setRole}
+        setStep={setStep}
+      />
+    );
 
   if (step === 2)
     return (
@@ -103,20 +109,36 @@ export default function AssessmentPage() {
         organizations={organizations}
         onSelect={handleOrganizationSelect}
         createOrganization={createOrganization}
+        prevStep={prevStep}
       />
     );
 
-  if (step === 3 && role === "IT")
+  if (step === 3)
+    return (
+      <AssetStep
+        assessmentId={assessmentId}
+        nextStep={nextStep}
+        prevStep={prevStep}
+      />
+    );
+
+  if (step === 4 && role === "IT")
     return (
       <RiskProfileStep
         selectedOrg={selectedOrg}
         riskProfile={riskProfile}
         setRiskProfile={setRiskProfile}
-        setStep={setStep}
+        nextStep={nextStep}
+        prevStep={prevStep}
       />
     );
 
-  if (step === 4)
+  if (step === 4 && role === "NON_IT") {
+    setStep(5);
+    return null;
+  }
+
+  if (step === 5)
     return (
       <QuestionsStep
         questions={questions}
@@ -124,6 +146,7 @@ export default function AssessmentPage() {
         riskProfile={riskProfile}
         submitSubcategory={submitSubcategory}
         assessmentId={assessmentId}
+        prevStep={prevStep}
       />
     );
 

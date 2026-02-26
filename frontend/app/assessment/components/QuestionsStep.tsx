@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Container, Button } from "./UI";
+import { generateSummary } from "../../lib/api";
 
 export default function QuestionsStep({
   questions,
@@ -11,6 +12,8 @@ export default function QuestionsStep({
   assessmentId,
 }: any) {
   const [answers, setAnswers] = useState<any>({});
+  const [result, setResult] = useState<any>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   function groupByCategory(data: any[]) {
     const map: Record<string, any[]> = {};
@@ -26,30 +29,55 @@ export default function QuestionsStep({
 
   async function handleSubmit() {
     if (!assessmentId) {
-      alert("Assessment not created yet.");
+      alert("Assessment not found.");
       return;
     }
 
-    const grouped = groupByCategory(questions);
-
-    for (const cat in grouped) {
-      const subQuestions = grouped[cat];
-
-      const formattedAnswers = subQuestions.map((q) => ({
-        question_id: q.id,
-        score: answers[q.id],
-      }));
-
-      await submitSubcategory({
-        assessment_id: assessmentId,
-        subcategory_id: subQuestions[0].subcategory_id,
-        answers: formattedAnswers,
-        inherent_likelihood: riskProfile.operational_likelihood,
-        inherent_impact: riskProfile.operational_impact,
-      });
+    // ✅ VALIDASI SEMUA TERISI
+    for (const q of questions) {
+      if (!answers[q.id]) {
+        alert("Please answer all questions before submitting.");
+        return;
+      }
     }
 
-    alert("Assessment submitted successfully.");
+    try {
+      setSubmitting(true);
+
+      const grouped = groupByCategory(questions);
+
+      // 🔹 SUBMIT PER SUBCATEGORY
+      for (const cat in grouped) {
+        const subQuestions = grouped[cat];
+
+        const formattedAnswers = subQuestions.map((q) => ({
+          question_id: q.id,
+          score: Number(answers[q.id]),
+        }));
+
+        await submitSubcategory({
+          assessment_id: assessmentId,
+          subcategory_id: subQuestions[0].subcategory_id,
+          answers: formattedAnswers,
+          inherent_likelihood: riskProfile?.operational_likelihood || 3,
+          inherent_impact: riskProfile?.operational_impact || 3,
+        });
+      }
+
+      // 🔹 GENERATE SUMMARY
+      const summaryRes = await generateSummary({
+        assessment_id: assessmentId,
+      });
+
+      setResult(summaryRes);
+
+      alert("Assessment completed successfully.");
+    } catch (err: any) {
+      console.error(err);
+      alert("Error submitting assessment.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const grouped = groupByCategory(questions);
@@ -58,7 +86,7 @@ export default function QuestionsStep({
     <Container>
       <h2>NIST CSF Assessment</h2>
 
-      {loading && <p>Loading...</p>}
+      {loading && <p>Loading questions...</p>}
 
       {Object.keys(grouped).map((cat) => (
         <div key={cat} style={{ marginBottom: 40 }}>
@@ -85,11 +113,12 @@ export default function QuestionsStep({
                         type="radio"
                         name={q.id}
                         value={score}
+                        checked={answers[q.id] === score}
                         onChange={() =>
-                          setAnswers({
-                            ...answers,
+                          setAnswers((prev: any) => ({
+                            ...prev,
                             [q.id]: score,
-                          })
+                          }))
                         }
                       />
                     </td>
@@ -102,8 +131,42 @@ export default function QuestionsStep({
       ))}
 
       <Button onClick={handleSubmit}>
-        Submit Assessment
+        {submitting ? "Submitting..." : "Submit Assessment"}
       </Button>
+
+      {/* 🔥 RESULT SECTION */}
+      {result && (
+        <div style={{ marginTop: 50 }}>
+          <hr style={{ marginBottom: 20 }} />
+          <h2>Assessment Result</h2>
+
+          <p>
+            <strong>Maturity Score:</strong>{" "}
+            {result.maturity || result.data?.maturity_score}
+          </p>
+
+          <p>
+            <strong>Residual Score:</strong>{" "}
+            {result.residual || result.data?.residual_score}
+          </p>
+
+          <p>
+            <strong>Risk Tier:</strong>{" "}
+            {result.riskTier || result.data?.risk_tier}
+          </p>
+
+          <h3>AI Reasoning</h3>
+          <pre
+            style={{
+              background: "#111",
+              padding: 20,
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {result.summary || result.data?.ai_reason}
+          </pre>
+        </div>
+      )}
     </Container>
   );
 }
