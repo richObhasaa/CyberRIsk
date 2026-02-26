@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import FlipFeatureCard from "./components/FlipFeatureCard";
 import { Globe, ShieldCheck, Brain, BarChart3, Sparkles, CheckCircle2, ChevronDown } from "lucide-react";
 import { useState } from "react";
+import FillingFormsSection from "./components/FillingFormsSection";
 
 const features = [
   {
@@ -25,6 +26,33 @@ const features = [
     title: "Risk Analytics Dashboard",
     icon: BarChart3,
     desc: "Visual risk insights.",
+  },
+];
+
+const businessRiskSteps = [
+  {
+    title: "Open Risk Assessment",
+    desc: "Navigate to the Risk Assessment module from the CyberRisk dashboard.",
+  },
+  {
+    title: "Enter Organization Profile",
+    desc: "Provide organization details including sector, employee size, and system type.",
+  },
+  {
+    title: "Register Critical Assets",
+    desc: "Add and classify important organizational assets with CIA ratings.",
+  },
+  {
+    title: "Select Vulnerabilities",
+    desc: "Choose detected or suspected vulnerabilities relevant to the assets.",
+  },
+  {
+    title: "Configure Risk Overrides (Optional)",
+    desc: "Adjust control effectiveness for advanced technical tuning if required.",
+  },
+  {
+    title: "Review Risk Results",
+    desc: "Analyze the calculated risk score and recommended mitigation actions.",
   },
 ];
 
@@ -183,44 +211,43 @@ export default function CyberRiskUserManual() {
         </div>
       </Section>
 
-      {/* ================= BUSINESS RISK ================= */}
-      <Section
-        id="business-risk"
-        title="Step‑by‑Step: Business Risk Assessment"
+{/* ================= BUSINESS RISK ================= */}
+<Section
+  id="business-risk"
+  title="Step-by-Step: Business Risk Assessment"
+>
+  <div className="space-y-3">
+    {businessRiskSteps.map((step, i) => (
+      <div
+        key={i}
+        className="group relative overflow-hidden rounded-xl border border-cyan-400/15 bg-[#020617]/60 backdrop-blur transition-all duration-300 hover:border-cyan-300/40 hover:bg-[#041c22]/70"
       >
-        <div className="space-y-3">
+        {/* left accent line */}
+        <div className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-[#22d3ee] to-[#0891b2] opacity-70 group-hover:opacity-100" />
 
-  {[
-    "Open the Risk Assessment module.",
-    "Fill in organizational profile information.",
-    "Answer the provided risk evaluation questions.",
-    "Submit the assessment form.",
-    "Review the calculated risk score and recommendations.",
- ].map((step, i) => (
-            <div
-                key={i}
-                className="group relative overflow-hidden rounded-xl border border-cyan-400/15 bg-[#020617]/60 backdrop-blur transition-all duration-300 hover:border-cyan-300/40 hover:bg-[#041c22]/70"
-            >
-            {/* left accent line */}
-            <div className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-[#22d3ee] to-[#0891b2] opacity-70 group-hover:opacity-100" />
+        <div className="flex items-start gap-4 p-4">
+          {/* step number */}
+          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#041c22] text-xs font-semibold text-cyan-300 border border-cyan-400/20">
+            {i + 1}
+          </div>
 
-            <div className="flex items-start gap-4 p-4">
-                {/* step number */}
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#041c22] text-xs font-semibold text-cyan-300 border border-cyan-400/20">
-                {i + 1}
-                </div>
+          {/* text */}
+          <div>
+            <p className="text-white font-medium">
+              {step.title}
+            </p>
+            <p className="text-gray-400 text-sm mt-1">
+              {step.desc}
+            </p>
+          </div>
+        </div>
+      </div>
+    ))}
+  </div>
+</Section>
 
-                {/* text */}
-                <p className="text-gray-300 leading-relaxed">
-                {step}
-                </p>
-            </div>
-            </div>
-         ))}
-
-</div>
-      </Section>
-
+      {/* ================= FILLING FORMS ================= */}
+<FillingFormsSection />
       {/* ================= AI FEATURE ================= */}
       <Section id="ai" title="AI Security Assistant">
         <div className="relative overflow-hidden rounded-2xl border border-cyan-400/15 bg-gradient-to-br from-[#041c22]/70 via-[#020617]/80 to-black p-6 backdrop-blur">
