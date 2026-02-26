@@ -1,10 +1,12 @@
 import https from "https";
+import { TLSSocket } from "tls";
 
 export const fetchTLSInfo = async (target: string) => {
     return new Promise((resolve) => {
         const req = https.get(target, (res) => {
-            const cert = res.socket.getPeerCertificate();
-            const protocol = res.socket.getProtocol();
+            const tlsSocket = res.socket as TLSSocket;
+            const cert = tlsSocket.getPeerCertificate();
+            const protocol = tlsSocket.getProtocol();
 
             resolve({
                 cert,

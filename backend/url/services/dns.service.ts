@@ -8,6 +8,10 @@ export const checkDNS = async (target: string): Promise<Finding[]> => {
         await dns.lookup(hostname);
         return [];
     } catch {
-        return [{ type: "DNS_ERROR" }];
+        return [{ 
+            type: "DNS_ERROR",
+            severity: "High",
+            description: "DNS resolution failed"
+        }];
     }
 };
