@@ -26,17 +26,12 @@ const StatsSection: React.FC<StatsSectionProps> = ({ title, stats }) => {
                             key={index}
                             className="flex flex-col items-center p-8 rounded-2xl border border-white/5 bg-white/[0.05] text-center transition-transform hover:scale-105"
                         >
-                            <span className="text-4xl md:text-5xl font-bold text-white mb-2">
+                            <span className="text-4xl md:text-4xl font-bold text-white mb-2">
                                 {stat.value}
                             </span>
                             <span className="text-[#B19EEF] font-medium uppercase tracking-widest text-xs mb-2">
                                 {stat.label}
                             </span>
-                            {stat.description && (
-                                <p className="text-[#B19EEF] font-bold uppercase tracking-widest text-xs fade-in">
-                                    {stat.description}
-                                </p>
-                            )}
                         </div>
                     ))}
                 </div>

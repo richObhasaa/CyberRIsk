@@ -1,6 +1,6 @@
 "use client";
 
-import ManualSidebar from "./components/Sidebar";
+import ManualSidebar from "../components/Sidebar";
 
 export default function UserManualLayout({
   children,
@@ -11,7 +11,7 @@ export default function UserManualLayout({
     <div className="min-h-screen bg-black text-white">
       {/* Top spacing (kalau ada navbar global) */}
       <div className="max-w-7xl mx-auto px-6 py-10">
-        
+
         <div className="flex gap-10">
           {/* Sidebar */}
           <ManualSidebar />

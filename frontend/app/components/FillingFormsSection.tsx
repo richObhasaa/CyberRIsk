@@ -8,7 +8,7 @@ import {
   Sliders,
   ChevronDown,
 } from "lucide-react";
-import Section from "./Section"; 
+import Section from "./Section";
 
 export default function FillingFormsSection() {
   const [open, setOpen] = useState<number | null>(0);
@@ -91,17 +91,15 @@ export default function FillingFormsSection() {
 
                 <ChevronDown
                   size={18}
-                  className={`text-cyan-300 transition-transform duration-300 ${
-                    isOpen ? "rotate-180" : ""
-                  }`}
+                  className={`text-cyan-300 transition-transform duration-300 ${isOpen ? "rotate-180" : ""
+                    }`}
                 />
               </button>
 
               {/* CONTENT */}
               <div
-                className={`grid transition-all duration-300 ${
-                  isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-                }`}
+                className={`grid transition-all duration-300 ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                  }`}
               >
                 <div className="overflow-hidden">
                   <div className="px-5 pb-5">

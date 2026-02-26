@@ -1,10 +1,10 @@
 "use client";
 
 import { motion } from "framer-motion";
-import FlipFeatureCard from "./components/FlipFeatureCard";
+import FlipFeatureCard from "../components/FlipFeatureCard";
 import { Globe, ShieldCheck, Brain, BarChart3, Sparkles, CheckCircle2, ChevronDown } from "lucide-react";
 import { useState } from "react";
-import FillingFormsSection from "./components/FillingFormsSection";
+import FillingFormsSection from "../components/FillingFormsSection";
 
 const features = [
   {
@@ -88,7 +88,7 @@ function Section({ id, title, children }: any) {
 
 
 export default function CyberRiskUserManual() {
-    const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   return (
     <div>
@@ -121,26 +121,26 @@ export default function CyberRiskUserManual() {
           </p>
 
           <p className="mt-4 text-gray-300 max-w-3xl">
-          CyberRisk is an AI‑powered cybersecurity risk assessment platform
-          designed to help organizations identify, analyze, and mitigate
-          digital risks in a structured and measurable way.
-        </p>
+            CyberRisk is an AI‑powered cybersecurity risk assessment platform
+            designed to help organizations identify, analyze, and mitigate
+            digital risks in a structured and measurable way.
+          </p>
 
-        <p className="mt-4 text-gray-300 max-w-3xl">
-          The platform integrates Web Security Audit and Business Risk
-          Assessment into a unified dashboard, enabling security teams,
-          auditors, and decision makers to gain clear visibility into their
-          security posture.
-        </p>
+          <p className="mt-4 text-gray-300 max-w-3xl">
+            The platform integrates Web Security Audit and Business Risk
+            Assessment into a unified dashboard, enabling security teams,
+            auditors, and decision makers to gain clear visibility into their
+            security posture.
+          </p>
         </div>
       </section>
 
       {/* ================= FEATURES ================= */}
       <Section id="features" title="Core Features">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {features.map((feature, i) => (
-                <FlipFeatureCard key={i} feature={feature} />
-            ))}
+          {features.map((feature, i) => (
+            <FlipFeatureCard key={i} feature={feature} />
+          ))}
         </div>
       </Section>
 
@@ -148,186 +148,184 @@ export default function CyberRiskUserManual() {
       <Section id="prerequisites" title="Prerequisites / Before You Start">
         <div className="space-y-3">
 
-  {[
-    "Ensure you have an active CyberRisk account.",
-    "Prepare the target website URL for security audit.",
-    "Gather organizational information for risk assessment.",
-    "Use a modern browser (Chrome, Edge, or Firefox).",
-    "Ensure stable internet connectivity.",
-  ].map((item, i) => (
-    <div
-      key={i}
-      className="group flex items-start gap-3 rounded-xl border border-cyan-400/15 bg-gradient-to-r from-[#041c22]/60 to-[#020617]/60 p-4 backdrop-blur transition-all duration-300 hover:border-cyan-300/40 hover:bg-[#041c22]/80"
-    >
-      {/* icon */}
-      <CheckCircle2
-        size={18}
-        className="mt-0.5 text-cyan-300/80 group-hover:text-cyan-200"
-      />
+          {[
+            "Ensure you have an active CyberRisk account.",
+            "Prepare the target website URL for security audit.",
+            "Gather organizational information for risk assessment.",
+            "Use a modern browser (Chrome, Edge, or Firefox).",
+            "Ensure stable internet connectivity.",
+          ].map((item, i) => (
+            <div
+              key={i}
+              className="group flex items-start gap-3 rounded-xl border border-cyan-400/15 bg-gradient-to-r from-[#041c22]/60 to-[#020617]/60 p-4 backdrop-blur transition-all duration-300 hover:border-cyan-300/40 hover:bg-[#041c22]/80"
+            >
+              {/* icon */}
+              <CheckCircle2
+                size={18}
+                className="mt-0.5 text-cyan-300/80 group-hover:text-cyan-200"
+              />
 
-      {/* text */}
-      <p className="text-gray-300 leading-relaxed">
-        {item}
-      </p>
-    </div>
-  ))}
+              {/* text */}
+              <p className="text-gray-300 leading-relaxed">
+                {item}
+              </p>
+            </div>
+          ))}
 
-</div>
+        </div>
       </Section>
 
       {/* ================= WEB AUDIT ================= */}
       <Section id="web-audit" title="Step‑by‑Step: Web Security Audit">
-       
-        <div className="space-y-3">
-            {[
-                "Navigate to the Web Security Audit page.",
-                "Enter the target website URL.",
-                "Configure scan options if available.",
-                "Click Run Audit.",
-                "Wait for the automated scan to complete.",
-                "Review detected vulnerabilities in the results panel.",
-            ].map((step, i) => (
-            <div
-                key={i}
-                className="group relative overflow-hidden rounded-xl border border-cyan-400/15 bg-[#020617]/60 backdrop-blur transition-all duration-300 hover:border-cyan-300/40 hover:bg-[#041c22]/70"
-            >
-            {/* left accent line */}
-            <div className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-[#22d3ee] to-[#0891b2] opacity-70 group-hover:opacity-100" />
 
-            <div className="flex items-start gap-4 p-4">
+        <div className="space-y-3">
+          {[
+            "Navigate to the Web Security Audit page.",
+            "Enter the target website URL.",
+            "Configure scan options if available.",
+            "Click Run Audit.",
+            "Wait for the automated scan to complete.",
+            "Review detected vulnerabilities in the results panel.",
+          ].map((step, i) => (
+            <div
+              key={i}
+              className="group relative overflow-hidden rounded-xl border border-cyan-400/15 bg-[#020617]/60 backdrop-blur transition-all duration-300 hover:border-cyan-300/40 hover:bg-[#041c22]/70"
+            >
+              {/* left accent line */}
+              <div className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-[#22d3ee] to-[#0891b2] opacity-70 group-hover:opacity-100" />
+
+              <div className="flex items-start gap-4 p-4">
                 {/* step number */}
                 <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#041c22] text-xs font-semibold text-cyan-300 border border-cyan-400/20">
-                {i + 1}
+                  {i + 1}
                 </div>
 
                 {/* text */}
                 <p className="text-gray-300 leading-relaxed">
-                {step}
+                  {step}
                 </p>
+              </div>
             </div>
-            </div>
-         ))}
+          ))}
 
         </div>
       </Section>
 
-{/* ================= BUSINESS RISK ================= */}
-<Section
-  id="business-risk"
-  title="Step-by-Step: Business Risk Assessment"
->
-  <div className="space-y-3">
-    {businessRiskSteps.map((step, i) => (
-      <div
-        key={i}
-        className="group relative overflow-hidden rounded-xl border border-cyan-400/15 bg-[#020617]/60 backdrop-blur transition-all duration-300 hover:border-cyan-300/40 hover:bg-[#041c22]/70"
+      {/* ================= BUSINESS RISK ================= */}
+      <Section
+        id="business-risk"
+        title="Step-by-Step: Business Risk Assessment"
       >
-        {/* left accent line */}
-        <div className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-[#22d3ee] to-[#0891b2] opacity-70 group-hover:opacity-100" />
+        <div className="space-y-3">
+          {businessRiskSteps.map((step, i) => (
+            <div
+              key={i}
+              className="group relative overflow-hidden rounded-xl border border-cyan-400/15 bg-[#020617]/60 backdrop-blur transition-all duration-300 hover:border-cyan-300/40 hover:bg-[#041c22]/70"
+            >
+              {/* left accent line */}
+              <div className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-[#22d3ee] to-[#0891b2] opacity-70 group-hover:opacity-100" />
 
-        <div className="flex items-start gap-4 p-4">
-          {/* step number */}
-          <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#041c22] text-xs font-semibold text-cyan-300 border border-cyan-400/20">
-            {i + 1}
-          </div>
+              <div className="flex items-start gap-4 p-4">
+                {/* step number */}
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-[#041c22] text-xs font-semibold text-cyan-300 border border-cyan-400/20">
+                  {i + 1}
+                </div>
 
-          {/* text */}
-          <div>
-            <p className="text-white font-medium">
-              {step.title}
-            </p>
-            <p className="text-gray-400 text-sm mt-1">
-              {step.desc}
-            </p>
-          </div>
+                {/* text */}
+                <div>
+                  <p className="text-white font-medium">
+                    {step.title}
+                  </p>
+                  <p className="text-gray-400 text-sm mt-1">
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
-      </div>
-    ))}
-  </div>
-</Section>
+      </Section>
 
       {/* ================= FILLING FORMS ================= */}
-<FillingFormsSection />
+      <FillingFormsSection />
       {/* ================= AI FEATURE ================= */}
       <Section id="ai" title="AI Security Assistant">
         <div className="relative overflow-hidden rounded-2xl border border-cyan-400/15 bg-gradient-to-br from-[#041c22]/70 via-[#020617]/80 to-black p-6 backdrop-blur">
 
-  {/* subtle glow */}
-  <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl" />
+          {/* subtle glow */}
+          <div className="pointer-events-none absolute -right-10 -top-10 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl" />
 
-  <p className="text-gray-300 leading-relaxed">
-    The AI Security Assistant provides intelligent explanations,
-    remediation suggestions, and contextual guidance based on your
-    assessment results.
-  </p>
+          <p className="text-gray-300 leading-relaxed">
+            The AI Security Assistant provides intelligent explanations,
+            remediation suggestions, and contextual guidance based on your
+            assessment results.
+          </p>
 
-  <p className="mt-4 text-gray-300 leading-relaxed">
-    Use this feature to accelerate analysis, understand complex
-    findings, and receive recommended next actions.
-  </p>
+          <p className="mt-4 text-gray-300 leading-relaxed">
+            Use this feature to accelerate analysis, understand complex
+            findings, and receive recommended next actions.
+          </p>
 
-</div>
+        </div>
       </Section>
 
       {/* ================= ABOUT ================= */}
       <Section id="about" title="About Us">
         <div className="relative overflow-hidden rounded-2xl border border-cyan-400/15 bg-gradient-to-br from-[#020617] via-[#041c22]/80 to-[#020617] p-6 backdrop-blur">
 
-  {/* accent line */}
-  <div className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-[#22d3ee] to-[#0891b2]" />
+          {/* accent line */}
+          <div className="absolute left-0 top-0 h-full w-[3px] bg-gradient-to-b from-[#22d3ee] to-[#0891b2]" />
 
-  <p className="text-gray-300 leading-relaxed">
-    CyberRisk is developed to simplify cybersecurity risk management
-    for modern organizations. Our mission is to make risk assessment
-    more automated, measurable, and accessible through AI-driven
-    technology.
-  </p>
+          <p className="text-gray-300 leading-relaxed">
+            CyberRisk is developed to simplify cybersecurity risk management
+            for modern organizations. Our mission is to make risk assessment
+            more automated, measurable, and accessible through AI-driven
+            technology.
+          </p>
 
-</div>
+        </div>
       </Section>
 
       {/* ================= FAQ ================= */}
       <Section id="faq" title="Frequently Asked Questions">
         <div className="space-y-3">
-  {faqs.map((faq, i) => {
-    const open = openIndex === i;
+          {faqs.map((faq, i) => {
+            const open = openIndex === i;
 
-    return (
-      <div
-        key={i}
-        className="overflow-hidden rounded-xl border border-cyan-400/15 bg-gradient-to-r from-[#041c22]/60 to-[#020617]/60 backdrop-blur transition-all duration-300"
-      >
-        {/* QUESTION */}
-        <button
-          onClick={() => setOpenIndex(open ? null : i)}
-          className="flex w-full items-center justify-between gap-4 p-4 text-left hover:bg-[#041c22]/60"
-        >
-          <span className="font-medium text-white">{faq.q}</span>
+            return (
+              <div
+                key={i}
+                className="overflow-hidden rounded-xl border border-cyan-400/15 bg-gradient-to-r from-[#041c22]/60 to-[#020617]/60 backdrop-blur transition-all duration-300"
+              >
+                {/* QUESTION */}
+                <button
+                  onClick={() => setOpenIndex(open ? null : i)}
+                  className="flex w-full items-center justify-between gap-4 p-4 text-left hover:bg-[#041c22]/60"
+                >
+                  <span className="font-medium text-white">{faq.q}</span>
 
-          <ChevronDown
-            size={18}
-            className={`text-cyan-300 transition-transform duration-300 ${
-              open ? "rotate-180" : ""
-            }`}
-          />
-        </button>
+                  <ChevronDown
+                    size={18}
+                    className={`text-cyan-300 transition-transform duration-300 ${open ? "rotate-180" : ""
+                      }`}
+                  />
+                </button>
 
-        {/* ANSWER */}
-        <div
-          className={`grid transition-all duration-300 ${
-            open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
-          }`}
-        >
-          <div className="overflow-hidden">
-            <p className="px-4 pb-4 text-gray-300 leading-relaxed">
-              {faq.a}
-            </p>
-          </div>
+                {/* ANSWER */}
+                <div
+                  className={`grid transition-all duration-300 ${open ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                    }`}
+                >
+                  <div className="overflow-hidden">
+                    <p className="px-4 pb-4 text-gray-300 leading-relaxed">
+                      {faq.a}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      </div>
-    );
-  })}
-</div>
 
       </Section>
     </div>
