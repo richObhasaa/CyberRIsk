@@ -18,8 +18,8 @@ export const TextInput: React.FC<TextInputProps> = ({
     className = "",
 }) => {
     return (
-        <div className={`flex flex-col gap-2 w-full ${className}`}>
-            <label className="text-sm font-semibold text-gray-400 ml-1 tracking-wide">
+        <div className={`flex flex-col gap-1.5 w-full ${className}`}>
+            <label className="text-xs font-semibold text-gray-400 ml-1 tracking-wide">
                 {label}
             </label>
             <input
@@ -27,7 +27,7 @@ export const TextInput: React.FC<TextInputProps> = ({
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card"
+                className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card"
             />
         </div>
     );
@@ -42,8 +42,8 @@ export const PasswordInput: React.FC<TextInputProps> = ({
     className = "",
 }) => {
     return (
-        <div className={`flex flex-col gap-2 w-full ${className}`}>
-            <label className="text-sm font-semibold text-gray-400 ml-1 tracking-wide">
+        <div className={`flex flex-col gap-1.5 w-full ${className}`}>
+            <label className="text-xs font-semibold text-gray-400 ml-1 tracking-wide">
                 {label}
             </label>
             <input
@@ -51,7 +51,7 @@ export const PasswordInput: React.FC<TextInputProps> = ({
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card"
+                className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card"
             />
         </div>
     );
@@ -66,8 +66,8 @@ export const EmailInput: React.FC<TextInputProps> = ({
     className = "",
 }) => {
     return (
-        <div className={`flex flex-col gap-2 w-full ${className}`}>
-            <label className="text-sm font-semibold text-gray-400 ml-1 tracking-wide">
+        <div className={`flex flex-col gap-1.5 w-full ${className}`}>
+            <label className="text-xs font-semibold text-gray-400 ml-1 tracking-wide">
                 {label}
             </label>
             <input
@@ -75,7 +75,7 @@ export const EmailInput: React.FC<TextInputProps> = ({
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card"
+                className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card"
             />
         </div>
     );
@@ -90,15 +90,15 @@ export const BigTextInput: React.FC<TextInputProps> = ({
     className = "",
 }) => {
     return (
-        <div className={`flex flex-col gap-2 w-full ${className}`}>
-            <label className="text-sm font-semibold text-gray-400 ml-1 tracking-wide">
+        <div className={`flex flex-col gap-1.5 w-full ${className}`}>
+            <label className="text-xs font-semibold text-gray-400 ml-1 tracking-wide">
                 {label}
             </label>
             <textarea
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={placeholder}
-                className="w-full h-[200px] bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-3 text-white placeholder:text-gray-600 focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card resize-none"
+                className="w-full h-[200px] bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder:text-gray-600 focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card resize-none"
             />
         </div>
     );
@@ -120,15 +120,15 @@ export const SelectInput: React.FC<SelectInputProps> = ({
     className = "",
 }) => {
     return (
-        <div className={`flex flex-col gap-2 w-full ${className}`}>
-            <label className="text-sm font-semibold text-gray-400 ml-1 tracking-wide">
+        <div className={`flex flex-col gap-1.5 w-full ${className}`}>
+            <label className="text-xs font-semibold text-gray-400 ml-1 tracking-wide">
                 {label}
             </label>
             <div className="relative group">
                 <select
                     value={value}
                     onChange={(e) => onChange(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-3 text-white appearance-none focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card cursor-pointer"
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white appearance-none focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card cursor-pointer"
                 >
                     {options.map((opt) => (
                         <option key={opt.value} value={opt.value} className="bg-[#020403] text-white">
@@ -136,8 +136,8 @@ export const SelectInput: React.FC<SelectInputProps> = ({
                         </option>
                     ))}
                 </select>
-                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-[#B19EEF] transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400 group-hover:text-[#B19EEF] transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16">
                         <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
                     </svg>
                 </div>
@@ -168,12 +168,12 @@ export const RangeInput: React.FC<RangeInputProps> = ({
     const percentage = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
 
     return (
-        <div className={`flex flex-col gap-4 w-full ${className}`}>
+        <div className={`flex flex-col gap-3 w-full ${className}`}>
             <div className="flex justify-between items-end ml-1">
-                <label className="text-sm font-semibold text-gray-400 tracking-wide">
+                <label className="text-xs font-semibold text-gray-400 tracking-wide">
                     {label}
                 </label>
-                <span className="text-lg font-bold text-[#B19EEF] tabular-nums">
+                <span className="text-base font-bold text-[#B19EEF] tabular-nums">
                     {value}
                 </span>
             </div>
@@ -191,7 +191,6 @@ export const RangeInput: React.FC<RangeInputProps> = ({
                 />
             </div>
 
-            {/* Labels row — replaces min/max if provided */}
             {labels && labels.length > 0 ? (
                 <div className="relative flex justify-between px-1">
                     {labels.map((l, i) => {
@@ -200,8 +199,7 @@ export const RangeInput: React.FC<RangeInputProps> = ({
                         return (
                             <span
                                 key={i}
-                                className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-300 text-center ${isActive ? "text-[#B19EEF]" : "text-gray-600"
-                                    }`}
+                                className={`text-[10px] font-bold uppercase tracking-tighter transition-colors duration-300 text-center ${isActive ? "text-[#B19EEF]" : "text-gray-600"}`}
                             >
                                 {l}
                             </span>

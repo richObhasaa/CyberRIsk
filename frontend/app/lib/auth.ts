@@ -1,6 +1,6 @@
 "use client";
 
-const API_URL = "http://localhost:5000/api/auth";
+const API_URL = "http://localhost:4000/api/auth";
 
 export async function login(email: string, password: string) {
   const res = await fetch(`${API_URL}/login`, {
