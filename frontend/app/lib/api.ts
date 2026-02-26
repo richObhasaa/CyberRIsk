@@ -198,12 +198,16 @@ export const sendChatMessage = (
   )
 
 export const uploadChatFile = async (
-  file: File
+  file: File,
+  message?: string
 ) => {
   const token = await getTokenSafe()
 
   const formData = new FormData()
   formData.append("file", file)
+  if (message) {
+    formData.append("message", message)
+  }
 
   const res = await fetch(
     `${BASE_URL}/chatbot/upload`,

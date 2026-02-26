@@ -97,13 +97,18 @@ router.post(
 
       fs.unlinkSync(file.path)
 
+      const userMessage = (req.body as any)?.message || ""
+      const prompt = userMessage
+        ? `${userMessage}\n\n--- Extracted File Content ---\n${extractedText}`
+        : extractedText
+
       const response = await axios.post(
         "https://api.deepseek.com/v1/chat/completions",
         {
           model: "deepseek-chat",
           messages: [
             { role: "system", content: "You are a cybersecurity assistant." },
-            { role: "user", content: extractedText }
+            { role: "user", content: prompt }
           ]
         },
         {
