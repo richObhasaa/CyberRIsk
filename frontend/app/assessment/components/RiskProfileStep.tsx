@@ -4,7 +4,8 @@ export default function RiskProfileStep({
   selectedOrg,
   riskProfile,
   setRiskProfile,
-  setStep,
+  nextStep,
+  prevStep,
 }: any) {
   return (
     <Container>
@@ -26,7 +27,7 @@ export default function RiskProfileStep({
         }
       />
 
-      <Button onClick={() => setStep(4)}>
+      <Button onClick={nextStep}>
         Continue to NIST Questions
       </Button>
     </Container>

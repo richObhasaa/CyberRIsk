@@ -228,7 +228,7 @@ router.post(
   async (req, res) => {
     try {
       const user = (req as any).user;
-      const { name } = req.body;
+      const { name, business_sector, employee_range } = req.body;
 
       if (!name)
         return res.status(400).json({
@@ -245,9 +245,13 @@ router.post(
       let org = existing;
 
       if (!existing) {
+        const insertPayload: any = { name };
+        if (business_sector) insertPayload.business_sector = business_sector;
+        if (employee_range) insertPayload.employee_range = employee_range;
+
         const { data, error: insertError } = await supabase
           .from("organizations")
-          .insert({ name })
+          .insert(insertPayload)
           .select()
           .single();
 
@@ -436,9 +440,9 @@ router.post(
 
       res.json({ success: true, ...result });
     } catch (err: any) {
+      console.error("SUBMIT SUBCATEGORY ERROR:", err);
       res.status(400).json({
-        success: false,
-        message: err.message,
+        error: err.message || "Failed to submit subcategory",
       });
     }
   }
@@ -646,6 +650,20 @@ router.post("/generate-summary", verifyToken, async (req, res) => {
     if (!assessment_id) {
       return res.status(400).json({ error: "assessment_id required" });
     }
+
+    /* GET ASSESSMENT DETAILS (for period) */
+    const { data: assessment, error: assessErr } = await supabase
+      .from("assessments")
+      .select("period_start, period_end")
+      .eq("id", assessment_id)
+      .single();
+
+    if (assessErr || !assessment) {
+      return res.status(400).json({ error: "Assessment not found" });
+    }
+
+    const period_start = assessment.period_start || "N/A";
+    const period_end = assessment.period_end || "N/A";
 
     /* GET ALL SUBCATEGORY RESULTS */
     const { data: results, error } = await supabase

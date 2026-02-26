@@ -6,7 +6,8 @@ import { addAsset } from "../../lib/api";
 
 export default function AssetStep({
   assessmentId,
-  setStep,
+  nextStep,
+  prevStep,
 }: any) {
   const [assets, setAssets] = useState<any[]>([]);
 
@@ -119,7 +120,7 @@ export default function AssetStep({
       </p>
 
       <Button
-        onClick={() => setStep(4)}
+        onClick={nextStep}
         style={{ marginTop: 20 }}
       >
         Continue

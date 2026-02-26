@@ -19,9 +19,9 @@ export default function QuestionsStep({
     const map: Record<string, any[]> = {};
 
     for (const q of data) {
-      const category = q.subcategory_id.split("-")[0];
-      if (!map[category]) map[category] = [];
-      map[category].push(q);
+      const key = q.subcategory_id;
+      if (!map[key]) map[key] = [];
+      map[key].push(q);
     }
 
     return map;

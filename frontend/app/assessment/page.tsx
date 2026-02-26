@@ -26,6 +26,9 @@ export default function AssessmentPage() {
   const [questions, setQuestions] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const [period, setPeriod] = useState({ start: "", end: "" });
+  const [orgMeta, setOrgMeta] = useState({ business_sector: "", employee_range: "" });
+
   const [riskProfile, setRiskProfile] = useState({
     operational_likelihood: 3,
     operational_impact: 3,
@@ -34,8 +37,16 @@ export default function AssessmentPage() {
   /* LOAD ORGANIZATIONS */
   useEffect(() => {
     async function load() {
-      const res = await getMyOrganizations();
-      setOrganizations(res?.organizations || []);
+      try {
+        const res = await getMyOrganizations();
+        setOrganizations(res?.organizations || []);
+      } catch (err: any) {
+        if (err.message === "No active session" || err.message === "Session expired") {
+          window.location.href = "/auth";
+        } else {
+          console.error("Failed to load organizations:", err);
+        }
+      }
     }
     load();
   }, []);
@@ -61,26 +72,26 @@ export default function AssessmentPage() {
     if (!org?.id) return;
     if (!role) return alert("Role not selected.");
 
-    const periodStart = prompt("Enter period start (YYYY-MM-DD)");
-    const periodEnd = prompt("Enter period end (YYYY-MM-DD)");
-
-    if (!periodStart || !periodEnd)
+    if (!period.start || !period.end)
       return alert("Period start and end required.");
 
-    const res = await createAssessment({
-      organization_id: org.id,
-      assessment_type: role,
-      period_start: periodStart,
-      period_end: periodEnd,
-    });
+    try {
+      const res = await createAssessment({
+        organization_id: org.id,
+        assessment_type: role,
+        period_start: period.start,
+        period_end: period.end,
+      });
 
-    if (!res?.assessment?.id)
-      return alert("Failed to create assessment.");
+      if (!res?.assessment?.id)
+        return alert("Failed to create assessment.");
 
-    setSelectedOrg(org);
-    setAssessmentId(res.assessment.id);
-
-    setStep(3); // GO TO ASSET FIRST
+      setSelectedOrg(org);
+      setAssessmentId(res.assessment.id);
+      setStep(3); // GO TO ASSET FIRST
+    } catch (err: any) {
+      alert(err.message || "Failed to create assessment.");
+    }
   }
 
   /* STEP NAVIGATION HELPERS */
@@ -103,15 +114,18 @@ export default function AssessmentPage() {
       />
     );
 
-  if (step === 2)
-    return (
-      <OrganizationStep
-        organizations={organizations}
-        onSelect={handleOrganizationSelect}
-        createOrganization={createOrganization}
-        prevStep={prevStep}
-      />
-    );
+if (step === 2)
+  return (
+    <OrganizationStep
+      organizations={organizations}
+      onSelect={handleOrganizationSelect}
+      createOrganization={createOrganization}
+      period={period}
+      setPeriod={setPeriod}
+      orgMeta={orgMeta}
+      setOrgMeta={setOrgMeta}
+    />
+  );
 
   if (step === 3)
     return (
