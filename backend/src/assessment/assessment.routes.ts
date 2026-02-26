@@ -209,13 +209,26 @@ router.post(
       let org = existing;
 
       if (!existing) {
-        const { data } = await supabase
+        const { data, error: insertError } = await supabase
           .from("organizations")
           .insert({ name })
           .select()
           .single();
 
+        if (insertError || !data) {
+          console.error("INSERT ORG ERROR:", insertError);
+          return res.status(500).json({
+            error: insertError?.message || "Failed to create organization",
+          });
+        }
+
         org = data;
+      }
+
+      if (!org || !org.id) {
+        return res.status(500).json({
+          error: "Organization could not be resolved",
+        });
       }
 
       // Pastikan user tidak double insert di organization_users
