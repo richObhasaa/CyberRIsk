@@ -41,7 +41,8 @@ export default function Navbar({ mode }: NavbarProps) {
                 </div>
                 {/* Middle: Links */}
                 <div className={`hidden ${(mode !== null && mode === "short") ? "md:hidden" : "md:flex"} items-center gap-6`}>
-                    <a href="#features" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+
+                    <a href="/user-manual" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
                         Manual
                     </a>
                     <a href="/audit" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">

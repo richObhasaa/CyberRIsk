@@ -4,6 +4,14 @@
 @tailwind components;
 @tailwind utilities;
 
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
 /* ── Keyframes (must stay in CSS) ──────────────────────────── */
 @keyframes fadeUp {
   from {
