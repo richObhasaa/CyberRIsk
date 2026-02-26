@@ -4,9 +4,11 @@ import { useState } from "react";
 import ContentSection from "../layouts/ContentSection";
 import TooltipButton from "../components/TooltipButton";
 import ProtectedRoute from "../components/ProtectedRoute";
-
+import LoggedInAsBar from "../components/LoggedInAsBar";
+import { getEmail } from "../lib/auth";
 
 export default function FormPage() {
+    const userEmail = getEmail();
     return (
         <ProtectedRoute>
             <div className="h-max w-full flex flex-col overflow-hidden">
@@ -45,6 +47,7 @@ export default function FormPage() {
                 {/* Right fade */}
                 <div className="hidden md:block absolute pointer-events-none inset-y-0 right-0 w-80 bg-gradient-to-l from-black to-transparent" />
             </div>
+            <LoggedInAsBar userEmail={userEmail} />
         </ProtectedRoute>
     );
 }

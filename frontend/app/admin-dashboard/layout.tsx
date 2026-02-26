@@ -10,7 +10,7 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
     const { setMode } = useNavbar();
 
     useEffect(() => {
-        setMode("short");
+        setMode("dashboard");
         return () => setMode(null);
     }, []);
 

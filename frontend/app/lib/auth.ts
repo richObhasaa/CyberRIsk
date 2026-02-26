@@ -77,5 +77,20 @@ export async function refreshAccessToken(): Promise<string | null> {
 }
 
 export function getAccessToken() {
-  return localStorage.getItem("access_token");
+  try {
+    return localStorage.getItem("access_token");
+  } catch {
+    return null;
+  }
+}
+
+export function getEmail() {
+  try {
+    const token = getAccessToken();
+    if (!token) return null;
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    return payload?.email;
+  } catch {
+    return null;
+  }
 }

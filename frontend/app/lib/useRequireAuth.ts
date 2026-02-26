@@ -7,32 +7,25 @@ import { getAccessToken } from "./auth";
 export function useRequireAuth() {
   const router = useRouter();
   const pathname = usePathname();
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = () => {
-      const token = getAccessToken();
+    const token = getAccessToken();
+    const isAuthPage = pathname.startsWith("/auth");
 
-      const isAuthPage =
-        pathname.startsWith("/auth");
+    if (!token && !isAuthPage) {
+      router.replace("/auth");
+      // Don't setLoading(false) — keep blocking until navigation completes
+      return;
+    }
 
-      // Tidak login dan bukan di auth page → paksa ke /auth
-      if (!token && !isAuthPage) {
-        router.replace("/auth");
-        return;
-      }
+    if (token && isAuthPage) {
+      router.replace("/");
+      return;
+    }
 
-      // Sudah login tapi masih di auth page → redirect ke home
-      if (token && isAuthPage) {
-        router.replace("/");
-        return;
-      }
-
-      setLoading(false);
-    };
-
-    checkAuth();
+    // Only unblock rendering when we're certain: authenticated + correct page
+    setLoading(false);
   }, [pathname, router]);
 
   return { loading };

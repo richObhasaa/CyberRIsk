@@ -89,12 +89,12 @@ export default function AuthPage() {
     };
 
     return (
-        <div className="relative min-h-screen w-full flex items-start justify-center py-20">
+        <div className="relative min-h-screen w-full flex items-start justify-center py-30">
             <div className="flex flex-col items-center justify-center w-full max-w-sm p-7 border border-white/10 rounded-2xl mx-4 z-10">
 
                 <h1
                     key={`title-${animKey}`}
-                    className="text-2xl font-bold mb-6 text-white fade-up"
+                    className={`text-2xl font-bold ${error || message ? "mb-2" : "mb-6"} text-white fade-up`}
                 >
                     {mode === "login" ? "Welcome Back" : "Create Account"}
                 </h1>
@@ -170,7 +170,7 @@ export default function AuthPage() {
             </div>
 
             {/* Background Effects */}
-            <div className="hidden md:block absolute pointer-events-none inset-x-0 bottom-0 h-100 bg-gradient-to-t from-[#B19EEF]/20 to-transparent" />
+            <div className="hidden md:block absolute pointer-events-none inset-x-0 bottom-0 h-100 bg-gradient-to-t from-[#B19EEF]/50 to-transparent" />
             <div className="hidden md:block absolute pointer-events-none inset-y-0 left-0 w-100 bg-gradient-to-r from-black to-transparent" />
             <div className="hidden md:block absolute pointer-events-none inset-y-0 right-0 w-100 bg-gradient-to-l from-black to-transparent" />
         </div>
