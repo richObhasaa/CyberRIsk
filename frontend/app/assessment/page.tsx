@@ -24,7 +24,7 @@ export default function AssessmentPage() {
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
 
   const [questions, setQuestions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [period, setPeriod] = useState({ start: "", end: "" });
   const [orgMeta, setOrgMeta] = useState({ business_sector: "", employee_range: "" });
@@ -55,15 +55,27 @@ export default function AssessmentPage() {
   useEffect(() => {
     if (step !== 5 || !role) return;
 
+    setLoading(true);
+
     async function load() {
-      setLoading(true);
-      const res = await getQuestions(role);
-      setQuestions(res?.questions || []);
-      setLoading(false);
+      try {
+        console.log("[ASSESSMENT] Fetching questions for role:", role);
+        const res = await getQuestions(role!);
+        console.log("[ASSESSMENT] API response:", res);
+        console.log("[ASSESSMENT] Questions count:", res?.questions?.length || 0);
+        setQuestions(res?.questions || []);
+      } catch (err: any) {
+        console.error("[ASSESSMENT] Failed to load questions:", err);
+        setQuestions([]);
+      } finally {
+        setLoading(false);
+      }
     }
 
     load();
   }, [step, role]);
+
+
 
   /* HANDLE ORG SELECT */
   async function handleOrganizationSelect(item: any) {
@@ -136,7 +148,7 @@ if (step === 2)
       />
     );
 
-  if (step === 4 && role === "IT")
+  if (step === 4)
     return (
       <RiskProfileStep
         selectedOrg={selectedOrg}
@@ -146,11 +158,6 @@ if (step === 2)
         prevStep={prevStep}
       />
     );
-
-  if (step === 4 && role === "NON_IT") {
-    setStep(5);
-    return null;
-  }
 
   if (step === 5)
     return (

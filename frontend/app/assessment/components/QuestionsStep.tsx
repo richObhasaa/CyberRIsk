@@ -11,6 +11,7 @@ export default function QuestionsStep({
   riskProfile,
   submitSubcategory,
   assessmentId,
+  prevStep,
 }: any) {
   const [answers, setAnswers] = useState<any>({});
   const [result, setResult] = useState<any>(null);
@@ -83,11 +84,33 @@ export default function QuestionsStep({
 
   const grouped = groupByCategory(questions);
 
+  const answeredCount = Object.keys(answers).length;
+  const totalCount = questions.length;
+
   return (
     <Container>
       <h2>NIST CSF Assessment</h2>
 
-      {loading && <p>Loading questions...</p>}
+      {loading && (
+        <div style={{ textAlign: "center", padding: 40 }}>
+          <p>Loading questions...</p>
+        </div>
+      )}
+
+      {!loading && totalCount === 0 && (
+        <div style={{ textAlign: "center", padding: 40, color: "#f87171" }}>
+          <p>No questions found. Please go back and try again.</p>
+          {prevStep && (
+            <Button onClick={prevStep}>← Back</Button>
+          )}
+        </div>
+      )}
+
+      {!loading && totalCount > 0 && (
+        <p style={{ marginBottom: 20, color: "#aaa" }}>
+          Answer all {totalCount} questions below. Progress: {answeredCount}/{totalCount}
+        </p>
+      )}
 
       {Object.keys(grouped).map((cat) => (
         <div key={cat} style={{ marginBottom: 40 }}>
@@ -131,9 +154,15 @@ export default function QuestionsStep({
         </div>
       ))}
 
-      <Button onClick={handleSubmit}>
-        {submitting ? "Submitting..." : "Submit Assessment"}
-      </Button>
+      {prevStep && (
+        <Button onClick={prevStep}>← Back</Button>
+      )}
+
+      {!loading && totalCount > 0 && (
+        <Button onClick={handleSubmit}>
+          {submitting ? "Submitting..." : `Submit Assessment (${answeredCount}/${totalCount})`}
+        </Button>
+      )}
 
       {/* 🔥 RESULT SECTION */}
       {result && (

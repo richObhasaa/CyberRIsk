@@ -94,11 +94,15 @@ router.get(
     try {
       const { role } = req.params;
 
+      console.log("[QUESTIONS] Fetching questions for mode:", role);
+
       const { data, error } = await supabase
         .from("nist_questions")
         .select("*")
         .eq("mode", role)
         .order("subcategory_id", { ascending: true });
+
+      console.log("[QUESTIONS] Found:", data?.length || 0, "questions");
 
       if (error) throw error;
 
