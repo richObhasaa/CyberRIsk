@@ -247,7 +247,6 @@ router.post(
       if (!existing) {
         const insertPayload: any = { name };
         if (business_sector) insertPayload.business_sector = business_sector;
-        if (employee_range) insertPayload.employee_range = employee_range;
 
         const { data, error: insertError } = await supabase
           .from("organizations")
