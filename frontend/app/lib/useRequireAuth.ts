@@ -20,11 +20,13 @@ export function useRequireAuth() {
       // Tidak login dan bukan di auth page → paksa ke /auth
       if (!token && !isAuthPage) {
         router.replace("/auth");
+        return;
       }
 
       // Sudah login tapi masih di auth page → redirect ke home
       if (token && isAuthPage) {
         router.replace("/");
+        return;
       }
 
       setLoading(false);

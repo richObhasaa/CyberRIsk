@@ -1,8 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ContentSection from "../../layouts/ContentSection";
 import { RangeInput, SelectInput, TextInput, BigTextInput, EmailInput } from "../../components/formComponents";
+import {
+    getMyOrganizations,
+    createOrganization,
+    getQuestions,
+    createAssessment,
+    submitSubcategory,
+} from "../../lib/api";
 
 export default function FormPage() {
     const [formData, setFormData] = useState({
@@ -13,7 +20,17 @@ export default function FormPage() {
         test: 0,
     });
 
+    // const [organizations, setOrganizations] = useState<any[]>([]);
+    // const [selectedOrg, setSelectedOrg] = useState<any>(null);
+    // const [assessmentId, setAssessmentId] = useState<string | null>(null);
 
+    // useEffect(() => {
+    //     async function load() {
+    //         const res = await getMyOrganizations();
+    //         setOrganizations(res?.organizations || []);
+    //     }
+    //     load();
+    // }, []);
 
     return (
         <>
@@ -77,6 +94,7 @@ export default function FormPage() {
                                 max={5}
                                 labels={["None", "Low", "Medium", "High", "Critical"]}
                             />
+
                         </div>
                     </div>
                     <div className="flex justify-center px-6 sm:px-12 lg:px-24">

@@ -3,22 +3,12 @@
 import { useState } from "react";
 import ContentSection from "../layouts/ContentSection";
 import TooltipButton from "../components/TooltipButton";
-import { useRequireAuth } from "../lib/useRequireAuth";
+import ProtectedRoute from "../components/ProtectedRoute";
+
 
 export default function FormPage() {
-
-    const { loading } = useRequireAuth();
-
-    if (loading) {
-        return (
-            <div className="h-screen w-full flex flex-col items-center justify-center">
-                <p className="text-2xl font-bold">Loading...</p>
-            </div>
-        );
-    }
-
     return (
-        <>
+        <ProtectedRoute>
             <div className="h-max w-full flex flex-col overflow-hidden">
                 <div className="relative h-[50vh] w-full text-white fade-in flex items-center justify-center">
                     <div className="mt-15">
@@ -55,6 +45,6 @@ export default function FormPage() {
                 {/* Right fade */}
                 <div className="hidden md:block absolute pointer-events-none inset-y-0 right-0 w-80 bg-gradient-to-l from-black to-transparent" />
             </div>
-        </>
+        </ProtectedRoute>
     );
 }

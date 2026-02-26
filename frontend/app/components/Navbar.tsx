@@ -22,9 +22,20 @@ export default function Navbar({ mode }: NavbarProps) {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
+    const isShort = scrolled || mode === "short";
+
     return <>
         <div className={`${mode === "hidden" ? "hidden" : ""} fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 transition-all duration-300`}>
-            <nav className={`inline-flex items-center border border-white/[0.08] bg-white/[0.02] shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] backdrop-blur-2xl backdrop-saturate-150 transition-all duration-500 motion-reduce:duration-1 rounded-full ${scrolled || (mode !== null && mode === "short") ? "py-2 px-4 gap-15" : "py-2 px-2 gap-250"}`}>
+            <nav className={`
+                inline-flex items-center justify-between
+                border border-white/[0.08] bg-white/[0.02]
+                shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] backdrop-blur-2xl backdrop-saturate-150
+                transition-all duration-500 motion-reduce:duration-1 rounded-full
+                ${isShort
+                    ? "w-100 py-2 px-4"
+                    : "w-[calc(100vw-6rem)] py-2 px-2"
+                }
+            `}>
                 <div className="flex flex-1 items-center justify-start gap-2 px-4">
                     <img src="/vercel.svg" alt="Logo" className="w-7 h-auto" />
                 </div>

@@ -1,4 +1,5 @@
 import ChatbotInterface from "../components/ChatbotInterface";
+import ProtectedRoute from "../components/ProtectedRoute";
 import AdminMainPage from "./page";
 
 function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -27,6 +28,9 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
                             <a href="/admin/answers" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
                                 Answers
                             </a>
+                            <a href="/logout" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                                Logout
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -41,10 +45,12 @@ function AdminLayout({ children }: { children: React.ReactNode }) {
 
 export default function AdminPage() {
     return (
-        <AdminLayout
-            children={
-                <AdminMainPage />
-            }
-        />
+        <ProtectedRoute>
+            <AdminLayout
+                children={
+                    <AdminMainPage />
+                }
+            />
+        </ProtectedRoute>
     );
 }

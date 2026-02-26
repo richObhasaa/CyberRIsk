@@ -8,6 +8,8 @@ import {
     register,
 } from "../lib/auth";
 
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function AuthPage() {
 
     const [name, setName] = useState("");
@@ -25,6 +27,12 @@ export default function AuthPage() {
         setError("");
         setMessage("");
         setLoading(true);
+
+        if (!emailRegex.test(email)) {
+            setError("Please enter a valid email address.");
+            setLoading(false);
+            return;
+        }
 
         try {
             if (mode === "login") {
@@ -150,9 +158,6 @@ export default function AuthPage() {
                         <a href="/forgot-password" title="Coming soon" className="text-gray-500 hover:text-gray-300 transition-colors duration-300 text-[11px]">
                             Forgot your password?
                         </a>
-
-                        {error && <p>{error}</p>}
-                        {message && <p>{message}</p>}
                     </div>
                 </form>
             </div>
