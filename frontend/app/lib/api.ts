@@ -1,6 +1,6 @@
 "use client";
 
-import { getAccessToken } from "./auth";
+import { getAccessToken, refreshAccessToken } from "./auth";
 
 const BASE_URL = "http://localhost:4000/api";
 
@@ -38,6 +38,34 @@ async function request(
   const data = await res.json();
 
   if (!res.ok) {
+    // If 401, try refreshing the token once
+    if (res.status === 401) {
+      const newToken = await refreshAccessToken();
+      if (newToken) {
+        // Retry with new token
+        const retryRes = await fetch(
+          `${BASE_URL}${endpoint}`,
+          {
+            method,
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${newToken}`,
+            },
+            body: body ? JSON.stringify(body) : undefined,
+          }
+        );
+        const retryData = await retryRes.json();
+        if (retryRes.ok) return retryData;
+      }
+
+      // Refresh failed — redirect to login
+      console.error("Session expired. Redirecting to login.");
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      window.location.href = "/auth";
+      throw new Error("Session expired");
+    }
+
     console.error("Backend error:", data);
     throw new Error(
       data.error || "Backend error"

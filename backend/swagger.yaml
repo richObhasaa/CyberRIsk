@@ -1,0 +1,1218 @@
+openapi: 3.0.3
+info:
+  title: CyberRisk API
+  description: |
+    API documentation for the CyberRisk platform — an AI-powered cyber risk
+    management system built with Express + Supabase.
+
+    ## Authentication
+    Most endpoints require a **Bearer token** (Supabase JWT) in the
+    `Authorization` header. Obtain one via `/api/auth/login`.
+  version: 1.0.0
+  contact:
+    name: CyberRisk Team
+
+servers:
+  - url: http://localhost:4000/api
+    description: Local development server
+
+tags:
+  - name: Auth
+    description: Authentication (login, register, token refresh)
+  - name: Assessment
+    description: NIST CSF assessment lifecycle
+  - name: Organization
+    description: Organization management
+  - name: URL Audit
+    description: External URL security audit
+  - name: Health
+    description: Server health & connectivity check
+  - name: Test
+    description: Development / debugging utilities
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Supabase access_token obtained from /api/auth/login
+
+  schemas:
+    # ── Reusable error ────────────────────────
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "Something went wrong"
+
+    # ── Auth ──────────────────────────────────
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        password:
+          type: string
+          format: password
+          example: "securepassword123"
+
+    LoginResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        user:
+          type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            email:
+              type: string
+              format: email
+
+    RegisterRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    RefreshRequest:
+      type: object
+      required: [refresh_token]
+      properties:
+        refresh_token:
+          type: string
+
+    RefreshResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        refresh_token:
+          type: string
+        user:
+          type: object
+
+    # ── Organization ──────────────────────────
+    Organization:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+          example: "Acme Corp"
+
+    CreateOrganizationRequest:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+          example: "Acme Corp"
+
+    CreateOrganizationResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        organization:
+          $ref: "#/components/schemas/Organization"
+
+    MyOrganizationsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        organizations:
+          type: array
+          items:
+            type: object
+            properties:
+              role:
+                type: string
+                example: admin
+              organizations:
+                $ref: "#/components/schemas/Organization"
+
+    # ── Assessment ────────────────────────────
+    Assessment:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organization_id:
+          type: string
+          format: uuid
+        mode:
+          type: string
+          example: self
+        status:
+          type: string
+          enum: [draft, submitted, approved, revision_required, finalized]
+        maturity_average:
+          type: number
+          nullable: true
+        residual_score:
+          type: number
+          nullable: true
+        executive_summary:
+          type: string
+          nullable: true
+        auditor_notes:
+          type: string
+          nullable: true
+        auditor_summary:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    CreateAssessmentRequest:
+      type: object
+      required: [organization_id, assessment_type]
+      properties:
+        organization_id:
+          type: string
+          format: uuid
+        assessment_type:
+          type: string
+          example: self
+
+    CreateAssessmentResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        assessment:
+          $ref: "#/components/schemas/Assessment"
+
+    Question:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        subcategory_id:
+          type: string
+        mode:
+          type: string
+        question_text:
+          type: string
+        weight:
+          type: number
+
+    SubmitAllRequest:
+      type: object
+      required: [assessment_id, answers]
+      properties:
+        assessment_id:
+          type: string
+          format: uuid
+        answers:
+          type: array
+          items:
+            type: object
+            properties:
+              subcategory_id:
+                type: string
+              answers:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    question_id:
+                      type: string
+                      format: uuid
+                    score:
+                      type: number
+              inherent_likelihood:
+                type: number
+              inherent_impact:
+                type: number
+
+    SubmitSubcategoryRequest:
+      type: object
+      required: [assessment_id, subcategory_id, answers]
+      properties:
+        assessment_id:
+          type: string
+          format: uuid
+        subcategory_id:
+          type: string
+        answers:
+          type: array
+          items:
+            type: object
+            properties:
+              question_id:
+                type: string
+                format: uuid
+              score:
+                type: number
+        inherent_likelihood:
+          type: number
+        inherent_impact:
+          type: number
+
+    SubmitSubcategoryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        maturity:
+          type: number
+        inherent:
+          type: number
+        residual:
+          type: number
+
+    AuditorReviewRequest:
+      type: object
+      required: [assessment_id, decision]
+      properties:
+        assessment_id:
+          type: string
+          format: uuid
+        decision:
+          type: string
+          enum: [approved, revision_required]
+        notes:
+          type: string
+
+    ApproveFinalizeRequest:
+      type: object
+      required: [assessment_id]
+      properties:
+        assessment_id:
+          type: string
+          format: uuid
+        approval_note:
+          type: string
+
+    ApproveFinalizeResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        overallRiskTier:
+          type: string
+          enum: [LOW, MEDIUM, HIGH, CRITICAL]
+
+    AuditorSummaryRequest:
+      type: object
+      required: [assessment_id, auditor_summary]
+      properties:
+        assessment_id:
+          type: string
+          format: uuid
+        auditor_summary:
+          type: string
+
+    GenerateSummaryRequest:
+      type: object
+      required: [assessment_id]
+      properties:
+        assessment_id:
+          type: string
+          format: uuid
+
+    GenerateSummaryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        maturity:
+          type: number
+        residual:
+          type: number
+        riskTier:
+          type: string
+          enum: [LOW, MEDIUM, HIGH, CRITICAL]
+        summary:
+          type: string
+
+    ReportResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            assessment:
+              $ref: "#/components/schemas/Assessment"
+            executive_summary:
+              type: string
+              nullable: true
+            functions:
+              type: array
+              items:
+                type: object
+
+    # ── URL Audit ─────────────────────────────
+    UrlAuditRequest:
+      type: object
+      required: [url]
+      properties:
+        url:
+          type: string
+          format: uri
+          example: "https://example.com"
+
+    UrlAuditResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        url:
+          type: string
+        overallScore:
+          type: number
+        scorePercentage:
+          type: string
+          example: "82%"
+        totalDeductions:
+          type: number
+        scoreBreakdown:
+          type: object
+        scoreExplanation:
+          type: object
+        nistBreakdown:
+          type: object
+        findings:
+          type: array
+          items:
+            type: object
+        portScan:
+          type: object
+        redirect:
+          type: object
+        aiSummary:
+          type: string
+        explanation:
+          type: object
+          properties:
+            Identify:
+              type: string
+            Protect:
+              type: string
+            Detect:
+              type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    # ── Health ────────────────────────────────
+    HealthResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        status:
+          type: string
+          example: ok
+        timestamp:
+          type: string
+          format: date-time
+        supabase:
+          type: string
+          enum: [connected, unreachable]
+
+    # ── Test ──────────────────────────────────
+    TestResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    EchoResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        echo:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+
+    EchoPostResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        received:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+
+# ══════════════════════════════════════════════
+#  PATHS
+# ══════════════════════════════════════════════
+paths:
+  # ── Auth ────────────────────────────────────
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login with email & password
+      description: Authenticates a user via Supabase and returns JWT tokens.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LoginResponse"
+        "400":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Register a new account
+      description: Creates a new user in Supabase Auth.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "200":
+          description: Registration successful
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Supabase signup response
+        "400":
+          description: Registration error (e.g. email already taken)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Refresh access token
+      description: Uses a valid refresh_token to obtain a new access_token.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshRequest"
+      responses:
+        "200":
+          description: Tokens refreshed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RefreshResponse"
+        "400":
+          description: Missing refresh_token
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "401":
+          description: Refresh failed / token expired
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ── Organization ────────────────────────────
+  /assessment/my-organizations:
+    get:
+      tags: [Organization]
+      summary: List my organizations
+      description: Returns all organizations the authenticated user belongs to, with their role.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: List of organizations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MyOrganizationsResponse"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /assessment/create-organization:
+    post:
+      tags: [Organization]
+      summary: Create a new organization
+      description: |
+        Creates a new organization (or finds an existing one with the same name)
+        and links the current user as `admin`.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrganizationRequest"
+      responses:
+        "200":
+          description: Organization created or found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateOrganizationResponse"
+        "400":
+          description: Missing organization name
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ── Assessment ──────────────────────────────
+  /assessment/create:
+    post:
+      tags: [Assessment]
+      summary: Create a new assessment
+      description: Creates a new assessment in `draft` status for the given organization.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAssessmentRequest"
+      responses:
+        "200":
+          description: Assessment created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateAssessmentResponse"
+        "400":
+          description: Missing required fields
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /assessment/questions/{role}:
+    get:
+      tags: [Assessment]
+      summary: Get NIST questions by role
+      description: Returns all NIST CSF questions filtered by the given role/mode.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: role
+          in: path
+          required: true
+          schema:
+            type: string
+          description: The assessment mode/role (e.g. `self`, `auditor`)
+          example: self
+      responses:
+        "200":
+          description: Questions retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  questions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Question"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /assessment/submit-all:
+    post:
+      tags: [Assessment]
+      summary: Submit all answers at once
+      description: |
+        Submits all subcategory answers for an assessment and updates status to `submitted`.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitAllRequest"
+      responses:
+        "200":
+          description: Submission successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: Answers required
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /assessment/submit-subcategory:
+    post:
+      tags: [Assessment]
+      summary: Submit a single subcategory
+      description: |
+        Submits answers for one subcategory, calculates maturity / inherent / residual
+        scores, and stores results.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubmitSubcategoryRequest"
+      responses:
+        "200":
+          description: Subcategory scored
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmitSubcategoryResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+
+  /assessment/auditor-review:
+    post:
+      tags: [Assessment]
+      summary: Auditor review decision
+      description: |
+        Allows an auditor to approve or request revision for an assessment.
+        Requires auditor/admin role.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuditorReviewRequest"
+      responses:
+        "200":
+          description: Review recorded
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SuccessResponse"
+        "400":
+          description: Invalid decision
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /assessment/approve-finalize:
+    post:
+      tags: [Assessment]
+      summary: Approve & finalize assessment
+      description: |
+        Calculates aggregate scores across all subcategories, classifies the risk tier,
+        and marks the assessment as `finalized`. Requires auditor/admin role.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApproveFinalizeRequest"
+      responses:
+        "200":
+          description: Assessment finalized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApproveFinalizeResponse"
+        "400":
+          description: Already finalized or no results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Assessment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /assessment/auditor-summary:
+    post:
+      tags: [Assessment]
+      summary: Save auditor summary
+      description: |
+        Saves a free-text auditor summary on a finalized assessment.
+        Requires auditor/admin role.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuditorSummaryRequest"
+      responses:
+        "200":
+          description: Summary saved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                    example: Auditor summary saved
+        "400":
+          description: Assessment not finalized yet
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "403":
+          description: Insufficient role
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "404":
+          description: Assessment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /assessment/generate-summary:
+    post:
+      tags: [Assessment]
+      summary: Generate AI executive summary
+      description: |
+        Aggregates subcategory results, calculates maturity & residual averages,
+        classifies the risk tier, and generates an AI-written executive summary.
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateSummaryRequest"
+      responses:
+        "200":
+          description: Summary generated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateSummaryResponse"
+        "400":
+          description: Missing assessment_id or no results found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /assessment/list:
+    get:
+      tags: [Assessment]
+      summary: List assessments for my organization
+      description: Returns all assessments belonging to the user's organization.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Assessment list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Assessment"
+        "403":
+          description: No organization access
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /assessment/review/drafts:
+    get:
+      tags: [Assessment]
+      summary: List draft assessments (auditor)
+      description: |
+        Returns all draft assessments for the user's organization.
+        Requires admin or auditor role.
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Draft list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  drafts:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Assessment"
+        "403":
+          description: Access denied (not admin/auditor)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /assessment/{id}/report:
+    get:
+      tags: [Assessment]
+      summary: Get assessment report
+      description: Returns the full assessment data plus executive summary and function results.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Assessment ID
+      responses:
+        "200":
+          description: Report data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReportResponse"
+        "404":
+          description: Assessment not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /assessment/{organizationId}/list:
+    get:
+      tags: [Assessment]
+      summary: List assessments by organization ID
+      description: |
+        Returns assessments for a specific organization.
+        Called from the frontend via `listByOrganization()`.
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Organization ID
+      responses:
+        "200":
+          description: Assessment list for the organization
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Assessment"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  # ── URL Audit ───────────────────────────────
+  /url/audit:
+    post:
+      tags: [URL Audit]
+      summary: Run a full URL security audit
+      description: |
+        Performs DNS, header, TLS, port, and redirect analysis against the
+        provided URL. Maps findings to NIST CSF controls, calculates a risk
+        score, and generates an AI summary via DeepSeek.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UrlAuditRequest"
+      responses:
+        "200":
+          description: Audit completed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UrlAuditResponse"
+        "400":
+          description: Invalid or missing URL
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: Valid URL is required
+        "500":
+          description: Audit processing error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+
+  # ── Health ──────────────────────────────────
+  /health:
+    get:
+      tags: [Health]
+      summary: Health check
+      description: Confirms the API server is running and can reach Supabase.
+      responses:
+        "200":
+          description: Server is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+
+  # ── Test ────────────────────────────────────
+  /test:
+    get:
+      tags: [Test]
+      summary: Basic API test
+      description: Simple endpoint to verify routing is working.
+      responses:
+        "200":
+          description: API is working
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestResponse"
+
+  /test/echo:
+    get:
+      tags: [Test]
+      summary: Echo query parameter
+      parameters:
+        - name: message
+          in: query
+          schema:
+            type: string
+          description: Message to echo back
+          example: hello
+      responses:
+        "200":
+          description: Echoed message
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EchoResponse"
+    post:
+      tags: [Test]
+      summary: Echo JSON body
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Echoed body
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EchoPostResponse"
+
+  /test/error:
+    get:
+      tags: [Test]
+      summary: Simulated server error
+      description: Returns a 500 error for error-handling tests.
+      responses:
+        "500":
+          description: Simulated error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: This is a simulated error for testing.
+                  timestamp:
+                    type: string
+                    format: date-time
