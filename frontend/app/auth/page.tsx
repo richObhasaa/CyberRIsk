@@ -3,7 +3,10 @@
 import { TextInput, PasswordInput, EmailInput } from "../components/formComponents";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { login, register, resendConfirmation } from "../lib/auth";
+import {
+    login,
+    register,
+} from "../lib/auth";
 
 export default function AuthPage() {
 
@@ -26,14 +29,22 @@ export default function AuthPage() {
         try {
             if (mode === "login") {
                 await login(email, password);
+
+                const token = localStorage.getItem("access_token");
+                if (!token) {
+                    throw new Error("Login failed: No token received");
+                }
+
                 router.replace("/urltest");
             } else {
                 await register(email, password);
-                setMessage("Registration successful. Check your email to confirm.");
+                setMessage(
+                    "Registration successful. Check your email to confirm."
+                );
                 setMode("login");
             }
         } catch (err: any) {
-            setError(err.message || "Something went wrong");
+            setError(err?.message || "Something went wrong");
         } finally {
             setLoading(false);
         }
@@ -44,6 +55,11 @@ export default function AuthPage() {
             const hash = window.location.hash;
             setMode(hash === "#register" ? "register" : "login");
             setAnimKey(k => k + 1);
+            setPassword("");
+            setEmail("");
+            setName("");
+            setError("");
+            setMessage("");
         };
 
         handleHashChange();
@@ -58,19 +74,24 @@ export default function AuthPage() {
     };
 
     return (
-        <div className="relative min-h-screen w-full flex items-start justify-center py-25">
-            <div className="flex flex-col items-center justify-center w-full max-w-md p-10 border border-white/10 rounded-3xl mx-4 z-10">
+        <div className="relative min-h-screen w-full flex items-start justify-center py-20">
+            <div className="flex flex-col items-center justify-center w-full max-w-sm p-7 border border-white/10 rounded-2xl mx-4 z-10">
 
-                {/* Title animates on mode change */}
                 <h1
                     key={`title-${animKey}`}
-                    className="text-3xl font-bold mb-8 text-white fade-up"
+                    className="text-2xl font-bold mb-6 text-white fade-up"
                 >
                     {mode === "login" ? "Welcome Back" : "Create Account"}
                 </h1>
-                <form onSubmit={handleSubmit} className="w-full space-y-5">
+                {error && (
+                    <p className="text-red-400 text-xs mb-4 text-center">{error}</p>
+                )}
+                {message && (
+                    <p className="text-green-400 text-xs mb-4 text-center">{message}</p>
+                )}
 
-                    {/* Name field slides in when registering */}
+                <form method="post" onSubmit={handleSubmit} className="w-full space-y-4">
+
                     <div
                         key={`name-${animKey}`}
                         className={`overflow-hidden transition-all duration-500 ease-in-out ${mode === "register"
@@ -88,7 +109,6 @@ export default function AuthPage() {
                         </div>
                     </div>
 
-                    {/* Email and password fade up on mode change */}
                     <div key={`email-${animKey}`} className="fade-up" style={{ animationDelay: mode === "register" ? "80ms" : "0ms" }}>
                         <EmailInput
                             label="Email Address"
@@ -109,15 +129,15 @@ export default function AuthPage() {
 
                     <div key={`btn-${animKey}`} className="fade-up" style={{ animationDelay: mode === "register" ? "200ms" : "80ms" }}>
                         <button
-                            className="w-full bg-white hover:bg-gray-200 text-black font-bold py-4 rounded-2xl transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] mt-4 active:scale-95"
+                            className="w-full bg-white hover:bg-gray-200 text-black font-bold py-3 text-sm rounded-xl transition-all duration-300 shadow-[0_0_20px_-5px_rgba(255,255,255,0.3)] mt-3 active:scale-95 disabled:opacity-50"
                             type="submit"
                             disabled={loading}
                         >
-                            {loading ? "Loading..." : mode === "register" ? "Register" : "Sign In"}
+                            {loading ? "Please wait..." : mode === "register" ? "Register" : "Sign In"}
                         </button>
                     </div>
 
-                    <div key={`footer-${animKey}`} className="flex flex-col items-center gap-4 mt-5 text-sm fade-in">
+                    <div key={`footer-${animKey}`} className="flex flex-col items-center gap-3 mt-4 text-xs fade-in">
                         <button
                             onClick={toggleMode}
                             className="text-gray-400 hover:text-white transition-colors duration-300"
@@ -127,7 +147,7 @@ export default function AuthPage() {
                                 : "Don't have an account? Register here"}
                         </button>
 
-                        <a href="/forgot-password" title="Coming soon" className="text-gray-500 hover:text-gray-300 transition-colors duration-300 text-xs">
+                        <a href="/forgot-password" title="Coming soon" className="text-gray-500 hover:text-gray-300 transition-colors duration-300 text-[11px]">
                             Forgot your password?
                         </a>
 
@@ -273,4 +293,3 @@ const styles: any = {
 >>>>>>> rich
 =======
   } */}
-

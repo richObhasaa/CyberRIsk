@@ -9,8 +9,6 @@ import StatsSection from "./layouts/StatsSection";
 import FeatureSection from "./layouts/FeatureSection";
 import ContentSection from "./layouts/ContentSection";
 import BentoGrid from "./layouts/BentoGrid";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 export default function Home() {
     return (
@@ -45,7 +43,6 @@ export default function Home() {
                         </GradientText>
                     </div>
                 </div>
-
                 <div className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-black to-transparent" />
             </div>
 

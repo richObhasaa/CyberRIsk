@@ -9,13 +9,13 @@ export default function FormPage() {
 
     const { loading } = useRequireAuth();
 
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        company: "",
-        riskLevel: 45,
-        report: ""
-    });
+    if (loading) {
+        return (
+            <div className="h-screen w-full flex flex-col items-center justify-center">
+                <p className="text-2xl font-bold">Loading...</p>
+            </div>
+        );
+    }
 
     return (
         <>

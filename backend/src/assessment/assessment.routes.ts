@@ -540,5 +540,80 @@ router.post(
     }
   }
 );
+// AGGREGATE + SUMMARY
 
+router.post("/generate-summary", verifyToken, async (req, res) => {
+  try {
+    const { assessment_id } = req.body;
+
+    if (!assessment_id) {
+      return res.status(400).json({ error: "assessment_id required" });
+    }
+
+    /* GET ALL SUBCATEGORY RESULTS */
+    const { data: results, error } = await supabase
+      .from("assessment_subcategory_results")
+      .select("*")
+      .eq("assessment_id", assessment_id);
+
+    if (error) throw error;
+
+    if (!results || results.length === 0) {
+      return res.status(400).json({ error: "No results found" });
+    }
+
+    /* CALCULATE AGGREGATES */
+    const avgResidual =
+      results.reduce((acc, r) => acc + Number(r.residual_score), 0) /
+      results.length;
+
+    const avgMaturity =
+      results.reduce((acc, r) => acc + Number(r.maturity_level), 0) /
+      results.length;
+
+    /* CLASSIFY RISK */
+    let riskTier = "LOW";
+    if (avgResidual > 15) riskTier = "CRITICAL";
+    else if (avgResidual > 10) riskTier = "HIGH";
+    else if (avgResidual > 5) riskTier = "MEDIUM";
+
+    /* AI SUMMARY (BASIC VERSION) */
+    const aiSummary = `
+This assessment indicates an overall maturity level of ${avgMaturity.toFixed(
+      2
+    )} out of 5.
+The calculated residual risk score is ${avgResidual.toFixed(
+      2
+    )}, placing the organization in the ${riskTier} risk tier.
+
+Strength areas reflect moderate implementation of cybersecurity controls,
+while certain domains may require further investment to reduce residual exposure.
+
+Recommended next steps include strengthening governance oversight,
+enhancing monitoring controls, and improving incident response maturity.
+`;
+
+    /* UPDATE ASSESSMENT TABLE */
+    await supabase
+      .from("assessments")
+      .update({
+        maturity_average: avgMaturity,
+        residual_score: avgResidual,
+        executive_summary: aiSummary,
+        status: "draft",
+      })
+      .eq("id", assessment_id);
+
+    return res.json({
+      success: true,
+      maturity: avgMaturity,
+      residual: avgResidual,
+      riskTier,
+      summary: aiSummary,
+    });
+  } catch (err: any) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
+});
 export default router;

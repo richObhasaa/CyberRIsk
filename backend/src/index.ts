@@ -6,6 +6,8 @@ import healthRouter from "./routes/health";
 import testRouter from "./routes/test";
 import urlRouter from "./routes/url";
 
+import authRouter from "./auth/auth.routes";
+
 /* 🔥 IMPORTANT */
 import assessmentRouter from "./assessment/assessment.routes";
 
@@ -29,6 +31,7 @@ app.use("/api/url", urlRouter);
 
 /* 🔥 REGISTER ASSESSMENT ROUTES */
 app.use("/api/assessment", assessmentRouter);
+app.use("/api/auth", authRouter);
 
 /* ── 404 Fallback ─────────────────────── */
 app.use((_req, res) => {
