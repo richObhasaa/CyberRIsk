@@ -183,3 +183,44 @@ export const generateSummary = (
     "POST",
     payload
   );
+
+  /* ===========================
+   CHATBOT FUNCTIONS
+=========================== */
+
+export const sendChatMessage = (
+  payload: { message: string }
+) =>
+  request(
+    "/chatbot/chat",
+    "POST",
+    payload
+  )
+
+export const uploadChatFile = async (
+  file: File
+) => {
+  const token = await getTokenSafe()
+
+  const formData = new FormData()
+  formData.append("file", file)
+
+  const res = await fetch(
+    `${BASE_URL}/chatbot/upload`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: formData
+    }
+  )
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    throw new Error(data.error || "Upload failed")
+  }
+
+  return data
+}
