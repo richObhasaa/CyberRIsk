@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { supabase } from "./supabaseClient";
+import { getAccessToken } from "./auth";
 
 export function useRequireAuth() {
   const router = useRouter();
@@ -11,16 +11,19 @@ export function useRequireAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data } = await supabase.auth.getSession();
+    const checkAuth = () => {
+      const token = getAccessToken();
 
-      const isAuthPage = pathname.startsWith("/auth");
+      const isAuthPage =
+        pathname.startsWith("/auth");
 
-      if (!data.session && !isAuthPage) {
+      // Tidak login dan bukan di auth page → paksa ke /auth
+      if (!token && !isAuthPage) {
         router.replace("/auth");
       }
 
-      if (data.session && isAuthPage) {
+      // Sudah login tapi masih di auth page → redirect ke home
+      if (token && isAuthPage) {
         router.replace("/");
       }
 
