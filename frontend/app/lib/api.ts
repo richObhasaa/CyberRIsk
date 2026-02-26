@@ -184,6 +184,9 @@ export const generateSummary = (
     payload
   );
 
+export const getCategories = () =>
+  request("/assessment/categories");
+
   /* ===========================
    CHATBOT FUNCTIONS
 =========================== */

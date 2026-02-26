@@ -9,8 +9,6 @@ import urlRouter from "./routes/url";
 import chatbotRouter from "./auth/chatbot.routes";
 import authRouter from "./auth/auth.routes";
 
-import adminRouter from "../admin/admin.routes";
-import advisorRouter from "../advisor/advisor.routes";
 
 /* 🔥 IMPORTANT */
 import assessmentRouter from "./assessment/assessment.routes";
@@ -45,12 +43,6 @@ app.use((_req, res) => {
     message: "Route not found",
   });
 });
-
-/* ── admin Server ─────────────────────── */
-app.use("/api/admin", adminRouter);
-
-/* ── advisor Server ─────────────────────── */
-app.use("/api/advisor", advisorRouter);
 
 /* ── Start Server ─────────────────────── */
 app.listen(ENV.PORT, () => {
