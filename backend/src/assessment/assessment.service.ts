@@ -70,16 +70,19 @@ export async function submitSubcategory(
   const { error: upsertError } =
     await supabase
       .from("assessment_subcategory_results")
-      .upsert({
-        assessment_id,
-        subcategory_id,
-        inherent_likelihood,
-        inherent_impact,
-        inherent_score: inherent,
-        maturity_level: maturity,
-        residual_score: residual,
-        control_effectiveness: maturity / 5,
-      });
+      .upsert(
+        {
+          assessment_id,
+          subcategory_id,
+          inherent_likelihood,
+          inherent_impact,
+          inherent_score: inherent,
+          maturity_level: maturity,
+          residual_score: residual,
+          control_effectiveness: maturity / 5,
+        },
+        { onConflict: "assessment_id,subcategory_id" }
+      );
 
   if (upsertError)
     throw new Error(upsertError.message);

@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Container, Button } from "./UI";
+import { generateSummary } from "../../lib/api";
+import { exportAssessmentPDF } from "../../lib/pdf";
 
 export default function QuestionsStep({
   questions,
@@ -9,16 +11,19 @@ export default function QuestionsStep({
   riskProfile,
   submitSubcategory,
   assessmentId,
+  prevStep,
 }: any) {
   const [answers, setAnswers] = useState<any>({});
+  const [result, setResult] = useState<any>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   function groupByCategory(data: any[]) {
     const map: Record<string, any[]> = {};
 
     for (const q of data) {
-      const category = q.subcategory_id.split("-")[0];
-      if (!map[category]) map[category] = [];
-      map[category].push(q);
+      const key = q.subcategory_id;
+      if (!map[key]) map[key] = [];
+      map[key].push(q);
     }
 
     return map;
@@ -26,39 +31,86 @@ export default function QuestionsStep({
 
   async function handleSubmit() {
     if (!assessmentId) {
-      alert("Assessment not created yet.");
+      alert("Assessment not found.");
       return;
     }
 
-    const grouped = groupByCategory(questions);
-
-    for (const cat in grouped) {
-      const subQuestions = grouped[cat];
-
-      const formattedAnswers = subQuestions.map((q) => ({
-        question_id: q.id,
-        score: answers[q.id],
-      }));
-
-      await submitSubcategory({
-        assessment_id: assessmentId,
-        subcategory_id: subQuestions[0].subcategory_id,
-        answers: formattedAnswers,
-        inherent_likelihood: riskProfile.operational_likelihood,
-        inherent_impact: riskProfile.operational_impact,
-      });
+    // ✅ VALIDASI SEMUA TERISI
+    for (const q of questions) {
+      if (!answers[q.id]) {
+        alert("Please answer all questions before submitting.");
+        return;
+      }
     }
 
-    alert("Assessment submitted successfully.");
+    try {
+      setSubmitting(true);
+
+      const grouped = groupByCategory(questions);
+
+      // 🔹 SUBMIT PER SUBCATEGORY
+      for (const cat in grouped) {
+        const subQuestions = grouped[cat];
+
+        const formattedAnswers = subQuestions.map((q) => ({
+          question_id: q.id,
+          score: Number(answers[q.id]),
+        }));
+
+        await submitSubcategory({
+          assessment_id: assessmentId,
+          subcategory_id: subQuestions[0].subcategory_id,
+          answers: formattedAnswers,
+          inherent_likelihood: riskProfile?.operational_likelihood || 3,
+          inherent_impact: riskProfile?.operational_impact || 3,
+        });
+      }
+
+      // 🔹 GENERATE SUMMARY
+      const summaryRes = await generateSummary({
+        assessment_id: assessmentId,
+      });
+
+      setResult(summaryRes);
+
+      alert("Assessment completed successfully.");
+    } catch (err: any) {
+      console.error(err);
+      alert("Error submitting assessment.");
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   const grouped = groupByCategory(questions);
+
+  const answeredCount = Object.keys(answers).length;
+  const totalCount = questions.length;
 
   return (
     <Container>
       <h2>NIST CSF Assessment</h2>
 
-      {loading && <p>Loading...</p>}
+      {loading && (
+        <div style={{ textAlign: "center", padding: 40 }}>
+          <p>Loading questions...</p>
+        </div>
+      )}
+
+      {!loading && totalCount === 0 && (
+        <div style={{ textAlign: "center", padding: 40, color: "#f87171" }}>
+          <p>No questions found. Please go back and try again.</p>
+          {prevStep && (
+            <Button onClick={prevStep}>← Back</Button>
+          )}
+        </div>
+      )}
+
+      {!loading && totalCount > 0 && (
+        <p style={{ marginBottom: 20, color: "#aaa" }}>
+          Answer all {totalCount} questions below. Progress: {answeredCount}/{totalCount}
+        </p>
+      )}
 
       {Object.keys(grouped).map((cat) => (
         <div key={cat} style={{ marginBottom: 40 }}>
@@ -85,11 +137,12 @@ export default function QuestionsStep({
                         type="radio"
                         name={q.id}
                         value={score}
+                        checked={answers[q.id] === score}
                         onChange={() =>
-                          setAnswers({
-                            ...answers,
+                          setAnswers((prev: any) => ({
+                            ...prev,
                             [q.id]: score,
-                          })
+                          }))
                         }
                       />
                     </td>
@@ -101,9 +154,66 @@ export default function QuestionsStep({
         </div>
       ))}
 
-      <Button onClick={handleSubmit}>
-        Submit Assessment
-      </Button>
+      {prevStep && (
+        <Button onClick={prevStep}>← Back</Button>
+      )}
+
+      {!loading && totalCount > 0 && (
+        <Button onClick={handleSubmit}>
+          {submitting ? "Submitting..." : `Submit Assessment (${answeredCount}/${totalCount})`}
+        </Button>
+      )}
+
+      {/* 🔥 RESULT SECTION */}
+      {result && (
+        <div id="assessment-result" style={{ marginTop: 50 }}>
+          <hr style={{ marginBottom: 20 }} />
+          <h2>Assessment Result</h2>
+
+          <p>
+            <strong>Maturity Score:</strong>{" "}
+            {result.maturity || result.data?.maturity_score}
+          </p>
+
+          <p>
+            <strong>Residual Score:</strong>{" "}
+            {result.residual || result.data?.residual_score}
+          </p>
+
+          <p>
+            <strong>Risk Tier:</strong>{" "}
+            {result.riskTier || result.data?.risk_tier}
+          </p>
+
+          <h3>AI Reasoning</h3>
+          <pre
+            style={{
+              background: "#111",
+              padding: 20,
+              whiteSpace: "pre-wrap",
+            }}
+          >
+            {result.summary || result.data?.ai_reason}
+          </pre>
+
+          <Button
+            onClick={() =>
+              exportAssessmentPDF({
+                maturityScore:
+                  result.maturity || result.data?.maturity_score || 0,
+                residualScore:
+                  result.residual || result.data?.residual_score || 0,
+                riskTier:
+                  result.riskTier || result.data?.risk_tier || "UNKNOWN",
+                summary:
+                  result.summary || result.data?.ai_reason || "",
+              })
+            }
+          >
+            📄 Download PDF Report
+          </Button>
+        </div>
+      )}
     </Container>
   );
 }

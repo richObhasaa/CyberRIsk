@@ -4,6 +4,9 @@ import { getAccessToken, refreshAccessToken } from "./auth";
 
 const BASE_URL = "http://localhost:4000/api";
 
+export const addAsset = (payload: any) =>
+  request("/assessment/add-asset", "POST", payload);
+
 async function getTokenSafe() {
   const token = getAccessToken();
 
@@ -180,3 +183,48 @@ export const generateSummary = (
     "POST",
     payload
   );
+
+  /* ===========================
+   CHATBOT FUNCTIONS
+=========================== */
+
+export const sendChatMessage = (
+  payload: { message: string }
+) =>
+  request(
+    "/chatbot/chat",
+    "POST",
+    payload
+  )
+
+export const uploadChatFile = async (
+  file: File,
+  message?: string
+) => {
+  const token = await getTokenSafe()
+
+  const formData = new FormData()
+  formData.append("file", file)
+  if (message) {
+    formData.append("message", message)
+  }
+
+  const res = await fetch(
+    `${BASE_URL}/chatbot/upload`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: formData
+    }
+  )
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    throw new Error(data.error || "Upload failed")
+  }
+
+  return data
+}

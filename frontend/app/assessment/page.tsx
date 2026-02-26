@@ -13,6 +13,7 @@ import RoleStep from "./components/RoleStep";
 import OrganizationStep from "./components/OrganizationStep";
 import RiskProfileStep from "./components/RiskProfileStep";
 import QuestionsStep from "./components/QuestionsStep";
+import AssetStep from "./components/AssetStep";
 
 export default function AssessmentPage() {
   const [step, setStep] = useState(1);
@@ -23,7 +24,10 @@ export default function AssessmentPage() {
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
 
   const [questions, setQuestions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  const [period, setPeriod] = useState({ start: "", end: "" });
+  const [orgMeta, setOrgMeta] = useState({ business_sector: "", employee_range: "" });
 
   const [riskProfile, setRiskProfile] = useState({
     operational_likelihood: 3,
@@ -33,90 +37,129 @@ export default function AssessmentPage() {
   /* LOAD ORGANIZATIONS */
   useEffect(() => {
     async function load() {
-      const res = await getMyOrganizations();
-      setOrganizations(res?.organizations || []);
+      try {
+        const res = await getMyOrganizations();
+        setOrganizations(res?.organizations || []);
+      } catch (err: any) {
+        if (err.message === "No active session" || err.message === "Session expired") {
+          window.location.href = "/auth";
+        } else {
+          console.error("Failed to load organizations:", err);
+        }
+      }
     }
     load();
   }, []);
 
-  /* LOAD QUESTIONS */
+  /* LOAD QUESTIONS — ONLY WHEN ENTERING STEP 5 */
   useEffect(() => {
-    if (step !== 4 || !role) return;
+    if (step !== 5 || !role) return;
+
+    setLoading(true);
 
     async function load() {
-      setLoading(true);
-      const res = await getQuestions(role);
-      setQuestions(res?.questions || []);
-      setLoading(false);
+      try {
+        console.log("[ASSESSMENT] Fetching questions for role:", role);
+        const res = await getQuestions(role!);
+        console.log("[ASSESSMENT] API response:", res);
+        console.log("[ASSESSMENT] Questions count:", res?.questions?.length || 0);
+        setQuestions(res?.questions || []);
+      } catch (err: any) {
+        console.error("[ASSESSMENT] Failed to load questions:", err);
+        setQuestions([]);
+      } finally {
+        setLoading(false);
+      }
     }
 
     load();
   }, [step, role]);
 
-  /* HANDLE ORGANIZATION SELECT */
+
+
+  /* HANDLE ORG SELECT */
   async function handleOrganizationSelect(item: any) {
-    // Supabase join format safety
-    const org =
-      item?.organizations ||
-      item?.organization ||
-      item;
+    const org = item?.organizations || item?.organization || item;
 
-    if (!org?.id) {
-      console.error("Invalid organization object:", item);
-      return;
+    if (!org?.id) return;
+    if (!role) return alert("Role not selected.");
+
+    if (!period.start || !period.end)
+      return alert("Period start and end required.");
+
+    try {
+      const res = await createAssessment({
+        organization_id: org.id,
+        assessment_type: role,
+        period_start: period.start,
+        period_end: period.end,
+      });
+
+      if (!res?.assessment?.id)
+        return alert("Failed to create assessment.");
+
+      setSelectedOrg(org);
+      setAssessmentId(res.assessment.id);
+      setStep(3); // GO TO ASSET FIRST
+    } catch (err: any) {
+      alert(err.message || "Failed to create assessment.");
     }
+  }
 
-    if (!role) {
-  alert("Role not selected.");
-  return;
-}
+  /* STEP NAVIGATION HELPERS */
 
-    setSelectedOrg(org);
+  function nextStep() {
+    setStep((prev) => prev + 1);
+  }
 
-    const res = await createAssessment({
-      organization_id: org.id,
-      assessment_type: role,
-    });
-
-    if (!res?.assessment?.id) {
-      alert("Failed to create assessment.");
-      return;
-    }
-
-    setAssessmentId(res.assessment.id);
-
-    if (role === "IT") {
-      setStep(3);
-    } else {
-      setStep(4);
-    }
+  function prevStep() {
+    setStep((prev) => (prev > 1 ? prev - 1 : 1));
   }
 
   /* ROUTING */
 
   if (step === 1)
-    return <RoleStep setRole={setRole} setStep={setStep} />;
-
-  if (step === 2)
     return (
-      <OrganizationStep
-        organizations={organizations}
-        onSelect={handleOrganizationSelect}
-        createOrganization={createOrganization}
+      <RoleStep
+        setRole={setRole}
+        setStep={setStep}
       />
     );
 
-  if (step === 3 && role === "IT")
+if (step === 2)
+  return (
+    <OrganizationStep
+      organizations={organizations}
+      onSelect={handleOrganizationSelect}
+      createOrganization={createOrganization}
+      period={period}
+      setPeriod={setPeriod}
+      orgMeta={orgMeta}
+      setOrgMeta={setOrgMeta}
+    />
+  );
+
+  if (step === 3)
+    return (
+      <AssetStep
+        assessmentId={assessmentId}
+        nextStep={nextStep}
+        prevStep={prevStep}
+      />
+    );
+
+  if (step === 4)
     return (
       <RiskProfileStep
         selectedOrg={selectedOrg}
         riskProfile={riskProfile}
         setRiskProfile={setRiskProfile}
-        setStep={setStep}
+        nextStep={nextStep}
+        prevStep={prevStep}
       />
     );
 
-  if (step === 4)
+  if (step === 5)
     return (
       <QuestionsStep
         questions={questions}
@@ -124,6 +167,7 @@ export default function AssessmentPage() {
         riskProfile={riskProfile}
         submitSubcategory={submitSubcategory}
         assessmentId={assessmentId}
+        prevStep={prevStep}
       />
     );
 

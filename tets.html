@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CyberRisk Backend Test</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    button { margin: 5px 0; padding: 8px; }
+    input { margin: 3px 0; padding: 5px; width: 300px; }
+    pre { background: #111; color: #0f0; padding: 10px; }
+  </style>
+</head>
+<body>
+
+<h2>1️⃣ Login</h2>
+<input id="email" placeholder="Email" /><br/>
+<input id="password" type="password" placeholder="Password" /><br/>
+<button onclick="login()">Login</button>
+
+<h2>2️⃣ Create Assessment</h2>
+<input id="org" placeholder="Organization ID" /><br/>
+<input id="type" placeholder="IT / NON_IT" /><br/>
+<input id="start" placeholder="YYYY-MM-DD" /><br/>
+<input id="end" placeholder="YYYY-MM-DD" /><br/>
+<button onclick="createAssessment()">Create</button>
+
+<h2>3️⃣ Submit Subcategory</h2>
+<input id="assessmentId" placeholder="Assessment ID" /><br/>
+<input id="subcategory" placeholder="Subcategory ID" /><br/>
+<input id="questionId" placeholder="Question UUID" /><br/>
+<input id="score" placeholder="Score (1-5)" /><br/>
+<input id="likelihood" placeholder="Likelihood (1-5)" /><br/>
+<input id="impact" placeholder="Impact (1-5)" /><br/>
+<button onclick="submitSubcategory()">Submit Subcategory</button>
+
+<h2>4️⃣ Generate AI Summary</h2>
+<input id="summaryAssessmentId" placeholder="Assessment ID" /><br/>
+<button onclick="generateSummary()">Generate Summary</button>
+
+<h2>Response</h2>
+<pre id="output"></pre>
+
+<script>
+let token = null;
+
+function show(data) {
+  document.getElementById("output").textContent =
+    JSON.stringify(data, null, 2);
+}
+
+async function login() {
+  const res = await fetch("http://localhost:4000/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      email: document.getElementById("email").value,
+      password: document.getElementById("password").value
+    })
+  });
+  const data = await res.json();
+  token = data.access_token;
+  show(data);
+}
+
+async function createAssessment() {
+  const res = await fetch("http://localhost:4000/api/assessment/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({
+      organization_id: document.getElementById("org").value,
+      assessment_type: document.getElementById("type").value,
+      period_start: document.getElementById("start").value,
+      period_end: document.getElementById("end").value
+    })
+  });
+  const data = await res.json();
+  show(data);
+}
+
+async function submitSubcategory() {
+  const res = await fetch("http://localhost:4000/api/assessment/submit-subcategory", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({
+      assessment_id: document.getElementById("assessmentId").value,
+      subcategory_id: document.getElementById("subcategory").value,
+      answers: [
+        {
+          question_id: document.getElementById("questionId").value,
+          score: Number(document.getElementById("score").value)
+        }
+      ],
+      inherent_likelihood: Number(document.getElementById("likelihood").value),
+      inherent_impact: Number(document.getElementById("impact").value)
+    })
+  });
+  const data = await res.json();
+  show(data);
+}
+
+async function generateSummary() {
+  const res = await fetch("http://localhost:4000/api/assessment/generate-summary", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({
+      assessment_id: document.getElementById("summaryAssessmentId").value
+    })
+  });
+  const data = await res.json();
+  show(data);
+}
+</script>
+
+</body>
+</html>

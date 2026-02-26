@@ -6,6 +6,7 @@ import healthRouter from "./routes/health";
 import testRouter from "./routes/test";
 import urlRouter from "./routes/url";
 
+import chatbotRouter from "./auth/chatbot.routes";
 import authRouter from "./auth/auth.routes";
 
 /* 🔥 IMPORTANT */
@@ -28,6 +29,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/health", healthRouter);
 app.use("/api/test", testRouter);
 app.use("/api/url", urlRouter);
+app.use("/api/chatbot", chatbotRouter);
 
 /* 🔥 REGISTER ASSESSMENT ROUTES */
 app.use("/api/assessment", assessmentRouter);
