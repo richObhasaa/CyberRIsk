@@ -20,9 +20,6 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-
-  const { loading } = useRequireAuth();
-
   return (
     <html lang="en" className="dark">
       <body className={`${inter.variable} font-inter antialiased bg-[#020403] text-white`}>
