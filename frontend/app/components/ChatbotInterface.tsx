@@ -32,7 +32,6 @@ export default function ChatbotInterface() {
         setLoading(true);
 
         try {
-            // Replace this with your actual API call
             const res = await fetch("/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

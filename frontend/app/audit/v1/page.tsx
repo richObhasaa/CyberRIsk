@@ -20,17 +20,17 @@ export default function FormPage() {
         test: 0,
     });
 
-    // const [organizations, setOrganizations] = useState<any[]>([]);
-    // const [selectedOrg, setSelectedOrg] = useState<any>(null);
-    // const [assessmentId, setAssessmentId] = useState<string | null>(null);
+    const [organizations, setOrganizations] = useState<any[]>([]);
+    const [selectedOrg, setSelectedOrg] = useState<any>(null);
+    const [assessmentId, setAssessmentId] = useState<string | null>(null);
 
-    // useEffect(() => {
-    //     async function load() {
-    //         const res = await getMyOrganizations();
-    //         setOrganizations(res?.organizations || []);
-    //     }
-    //     load();
-    // }, []);
+    useEffect(() => {
+        async function load() {
+            const res = await getMyOrganizations();
+            setOrganizations(res?.organizations || []);
+        }
+        load();
+    }, []);
 
     return (
         <>

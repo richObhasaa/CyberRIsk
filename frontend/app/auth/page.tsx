@@ -43,7 +43,7 @@ export default function AuthPage() {
                     throw new Error("Login failed: No token received");
                 }
 
-                router.replace("/urltest");
+                router.replace("/check-url");
             } else {
                 await register(email, password);
                 setMessage(
@@ -57,6 +57,13 @@ export default function AuthPage() {
             setLoading(false);
         }
     }
+
+    useEffect(() => {
+        const token = localStorage.getItem("access_token");
+        if (token) {
+            router.replace("/check-url");
+        }
+    }, []);
 
     useEffect(() => {
         const handleHashChange = () => {

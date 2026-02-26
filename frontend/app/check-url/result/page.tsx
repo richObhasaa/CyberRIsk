@@ -6,6 +6,7 @@ import { logout, getAccessToken } from "../../lib/auth";
 import ResultUI from "./resultUi";
 import { decodeEmail } from "../../lib/resultUtilsweb";
 import { exportAuditPDF } from "@/app/lib/pdf";
+import ProtectedRoute from "@/app/components/ProtectedRoute";
 
 export default function ResultPage() {
   const router = useRouter();
@@ -27,14 +28,16 @@ export default function ResultPage() {
   }
 
   return (
-    <ResultUI
-      data={data}
-      email={email}
-      onBack={() => router.push("/urltest")}
-      onLogout={() => {
-        logout();
-        router.push("/auth");
-      }}
-    />
+    <ProtectedRoute>
+      <ResultUI
+        data={data}
+        email={email}
+        onBack={() => router.push("/urltest")}
+        onLogout={() => {
+          logout();
+          router.push("/auth");
+        }}
+      />
+    </ProtectedRoute>
   );
 }

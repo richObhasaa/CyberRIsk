@@ -27,7 +27,7 @@ export default function Navbar({ mode }: NavbarProps) {
     return <>
         <div className={`${mode === "hidden" ? "hidden" : ""} fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 transition-all duration-300`}>
             <nav className={`
-                inline-flex items-center justify-between
+                inline-flex items-center ${mode === "short" ? "justify-between" : "justify-center"}
                 border border-white/[0.08] bg-white/[0.02]
                 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] backdrop-blur-2xl backdrop-saturate-150
                 transition-all duration-500 motion-reduce:duration-1 rounded-full
@@ -35,14 +35,18 @@ export default function Navbar({ mode }: NavbarProps) {
                     ? "w-100 py-2 px-4"
                     : "w-[calc(100vw-6rem)] py-2 px-2"
                 }
+                ${mode === "short" ? "w-auto" : ""}
             `}>
-                <div className="flex flex-1 items-center justify-start gap-2 px-4">
+                <div className={`flex flex-1 items-center ${mode === "short" ? "justify-center" : "justify-start"} gap-2 px-4`}>
                     <img src="/vercel.svg" alt="Logo" className="w-7 h-auto" />
                 </div>
                 {/* Middle: Links */}
                 <div className={`hidden ${(mode !== null && mode === "short") ? "md:hidden" : "md:flex"} items-center gap-6`}>
                     <a href="#features" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
                         Manual
+                    </a>
+                    <a href="/check-url" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                        URL Checker
                     </a>
                     <a href="/audit" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
                         Audit Form

@@ -6,14 +6,6 @@ import StatsSection from "../layouts/StatsSection";
 import ListLayout from "../layouts/ListLayout";
 
 export default function AdminMainPage() {
-
-    const { setMode } = useNavbar();
-
-    useEffect(() => {
-        setMode("hidden");
-        return () => setMode(null);
-    }, []);
-
     return (
         <>
             <div className="w-full flex flex-col gap-5 pt-10 h-max bg-black border border-transparent text-white font-bold overflow-y-auto">
