@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Container, Button } from "./UI";
 import { generateSummary } from "../../lib/api";
+import { exportAssessmentPDF } from "../../lib/pdf";
 
 export default function QuestionsStep({
   questions,
@@ -136,7 +137,7 @@ export default function QuestionsStep({
 
       {/* 🔥 RESULT SECTION */}
       {result && (
-        <div style={{ marginTop: 50 }}>
+        <div id="assessment-result" style={{ marginTop: 50 }}>
           <hr style={{ marginBottom: 20 }} />
           <h2>Assessment Result</h2>
 
@@ -165,6 +166,23 @@ export default function QuestionsStep({
           >
             {result.summary || result.data?.ai_reason}
           </pre>
+
+          <Button
+            onClick={() =>
+              exportAssessmentPDF({
+                maturityScore:
+                  result.maturity || result.data?.maturity_score || 0,
+                residualScore:
+                  result.residual || result.data?.residual_score || 0,
+                riskTier:
+                  result.riskTier || result.data?.risk_tier || "UNKNOWN",
+                summary:
+                  result.summary || result.data?.ai_reason || "",
+              })
+            }
+          >
+            📄 Download PDF Report
+          </Button>
         </div>
       )}
     </Container>
