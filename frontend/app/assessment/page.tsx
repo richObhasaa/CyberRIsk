@@ -7,6 +7,7 @@ import {
   getQuestions,
   createAssessment,
   submitSubcategory,
+  getCategories,
 } from "../lib/api";
 
 import RoleStep from "./components/RoleStep";
@@ -34,6 +35,8 @@ export default function AssessmentPage() {
     operational_impact: 3,
   });
 
+  const [categories, setCategories] = useState<any[]>([]);
+
   /* LOAD ORGANIZATIONS */
   useEffect(() => {
     async function load() {
@@ -60,13 +63,17 @@ export default function AssessmentPage() {
     async function load() {
       try {
         console.log("[ASSESSMENT] Fetching questions for role:", role);
-        const res = await getQuestions(role!);
-        console.log("[ASSESSMENT] API response:", res);
-        console.log("[ASSESSMENT] Questions count:", res?.questions?.length || 0);
-        setQuestions(res?.questions || []);
+        const [qRes, catRes] = await Promise.all([
+          getQuestions(role!),
+          role === "IT" ? getCategories() : Promise.resolve({ categories: [] }),
+        ]);
+        console.log("[ASSESSMENT] Questions count:", qRes?.questions?.length || 0);
+        setQuestions(qRes?.questions || []);
+        setCategories(catRes?.categories || []);
       } catch (err: any) {
         console.error("[ASSESSMENT] Failed to load questions:", err);
         setQuestions([]);
+        setCategories([]);
       } finally {
         setLoading(false);
       }
@@ -168,8 +175,52 @@ if (step === 2)
         submitSubcategory={submitSubcategory}
         assessmentId={assessmentId}
         prevStep={prevStep}
+        role={role}
+        categories={categories}
       />
     );
 
-  return null;
+   return (
+    <div className="h-max w-full flex flex-col overflow-hidden text-white">
+
+      {/* HERO */}
+      <div className="relative h-[50vh] w-full flex items-center justify-center fade-in">
+
+        <div className="text-center">
+          <h1 className="text-4xl font-bold tracking-wide">
+            NIST CSF Assessment
+          </h1>
+
+          <p className="mt-4 text-white/70">
+            Cybersecurity Risk Evaluation Framework
+          </p>
+
+          <div className="mt-6">
+            <span className="px-4 py-2 border border-[#B19EEF] rounded-full text-sm tracking-wider">
+              Step {step} of 5
+            </span>
+          </div>
+        </div>
+
+        {/* Bottom fade */}
+        <div className="hidden md:block absolute pointer-events-none inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#B19EEF] to-transparent" />
+
+        {/* Left fade */}
+        <div className="hidden md:block absolute pointer-events-none inset-y-0 left-0 w-60 bg-gradient-to-r from-black to-transparent" />
+
+        {/* Right fade */}
+        <div className="hidden md:block absolute pointer-events-none inset-y-0 right-0 w-60 bg-gradient-to-l from-black to-transparent" />
+      </div>
+
+      {/* CONTENT */}
+      <div className="fade-in flex flex-col w-full max-w-7xl mx-auto px-8 md:px-20 py-16">
+
+        <div className="bg-black/30 border border-white/10 rounded-2xl p-10 backdrop-blur-sm">
+          {StepComponent}
+        </div>
+
+      </div>
+
+    </div>
+  );
 }

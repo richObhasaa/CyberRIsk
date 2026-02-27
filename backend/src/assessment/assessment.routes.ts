@@ -117,6 +117,31 @@ router.get(
 );
 
 /* =====================================================
+   🔥 NEW — GET ALL NIST CATEGORIES
+===================================================== */
+router.get(
+  "/categories",
+  verifyToken,
+  async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from("nist_categories")
+        .select("*")
+        .order("id", { ascending: true });
+
+      if (error) throw error;
+
+      res.json({
+        success: true,
+        categories: data || [],
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+);
+
+/* =====================================================
    🔥 NEW — SUBMIT ALL
 ===================================================== */
 router.post(

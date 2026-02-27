@@ -1,59 +1,63 @@
 export function Container({ children }: any) {
   return (
-    <div style={{ padding: 40, maxWidth: 800, margin: "auto", color: "white" }}>
-      {children}
+    <div className="w-full max-w-7xl mx-auto px-8 md:px-20 py-16 text-white">
+      <div className="bg-black/30 border border-white/10 rounded-2xl p-10 backdrop-blur-sm">
+        {children}
+      </div>
     </div>
   );
 }
 
-export function Button({ children, onClick }: any) {
+export function Button({ children, onClick, className = "", ...props }: any) {
   return (
     <button
       onClick={onClick}
-      style={{
-        padding: "10px 20px",
-        margin: "10px 10px 10px 0",
-        background: "#2563eb",
-        color: "white",
-        border: "none",
-        borderRadius: 8,
-        cursor: "pointer",
-      }}
+      className={`
+        px-6 py-3 rounded-2xl font-semibold
+        bg-white text-black
+        border border-transparent
+        hover:bg-transparent hover:text-white hover:border-white/50
+        transition-all duration-300
+        active:scale-95
+        ${className}
+      `}
+      {...props}
     >
       {children}
     </button>
   );
 }
 
-export function Input(props: any) {
+export function Input({ className = "", ...props }: any) {
   return (
     <input
       {...props}
-      style={{
-        width: "100%",
-        padding: 10,
-        marginTop: 5,
-        marginBottom: 15,
-        borderRadius: 6,
-        border: "1px solid #444",
-        background: "#111",
-        color: "white",
-      }}
+      className={`
+        w-full px-4 py-3 rounded-xl
+        bg-[#111] border border-white/20
+        text-white placeholder-white/40
+        focus:outline-none focus:border-[#B19EEF]
+        transition-all duration-300
+        ${className}
+      `}
     />
   );
 }
 
 export function Slider({ label, value, onChange }: any) {
   return (
-    <div style={{ marginBottom: 20 }}>
-      <label>{label}: {value}</label>
+    <div className="mb-8">
+      <label className="block mb-2 text-white/70">
+        {label}: <span className="text-white font-semibold">{value}</span>
+      </label>
+
       <input
         type="range"
         min={1}
         max={5}
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
-        style={{ width: "100%" }}
+        className="w-full accent-[#B19EEF] cursor-pointer"
       />
     </div>
   );
