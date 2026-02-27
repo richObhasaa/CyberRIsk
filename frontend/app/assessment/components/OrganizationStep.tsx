@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Container, Button, Input } from "./UI";
+import { DateInput, TextInput, SelectInput } from "../../components/formComponents";
 
 export default function OrganizationStep({
   organizations = [],
@@ -51,7 +52,6 @@ export default function OrganizationStep({
         return;
       }
 
-      // Auto-select the newly created org to proceed
       onSelect(res.organization);
     } catch (err: any) {
       alert(err.message || "Error creating organization.");
@@ -67,106 +67,60 @@ export default function OrganizationStep({
 
   return (
     <Container>
-      {/* ── Assessment Metadata (required first) ── */}
-      <h2>Assessment Details</h2>
+      <div className="flex flex-col gap-5">
+        <h2 className="text-2xl font-bold">Assessment Details</h2>
 
-      <h3>Assessment Period</h3>
-      <label style={labelStyle}>Start Date</label>
-      <input
-        type="date"
-        value={period.start}
-        onChange={(e) =>
-          setPeriod({ ...period, start: e.target.value })
-        }
-        style={inputStyle}
-      />
+        <h3>Assessment Period</h3>
 
-      <label style={labelStyle}>End Date</label>
-      <input
-        type="date"
-        value={period.end}
-        onChange={(e) =>
-          setPeriod({ ...period, end: e.target.value })
-        }
-        style={inputStyle}
-      />
+        {/* ✅ DateInput onChange receives string value directly */}
+        <DateInput
+          label="Start Date"
+          value={period.start}
+          onChange={(value) => setPeriod({ ...period, start: value })}
+        />
 
-      <h3>Business Sector</h3>
-      <Input
-        placeholder="e.g Financial Services"
-        value={orgMeta.business_sector}
-        onChange={(e: any) =>
-          setOrgMeta({
-            ...orgMeta,
-            business_sector: e.target.value,
-          })
-        }
-      />
+        <DateInput
+          label="End Date"
+          value={period.end}
+          onChange={(value) => setPeriod({ ...period, end: value })}
+        />
 
-      <h3>Employee Range</h3>
-      <select
-        value={orgMeta.employee_range}
-        onChange={(e) =>
-          setOrgMeta({
-            ...orgMeta,
-            employee_range: e.target.value,
-          })
-        }
-        style={inputStyle}
-      >
-        <option value="">Select Range</option>
-        <option value="1-50">1-50</option>
-        <option value="51-200">51-200</option>
-        <option value="201-1000">201-1000</option>
-        <option value="1000+">1000+</option>
-      </select>
+        {/* ✅ TextInput onChange also receives string value directly */}
+        <TextInput
+          label="Business Sector"
+          placeholder="e.g Financial Services"
+          value={orgMeta.business_sector}
+          onChange={(value) => setOrgMeta({ ...orgMeta, business_sector: value })}
+        />
 
-      <hr style={{ margin: "30px 0" }} />
+        <SelectInput
+          label="Employee Range"
+          value={orgMeta.employee_range}
+          onChange={(value) => setOrgMeta({ ...orgMeta, employee_range: value })}
+          options={[
+            { label: "1-50", value: "1-50" },
+            { label: "51-200", value: "51-200" },
+            { label: "201-1000", value: "201-1000" },
+            { label: "1000+", value: "1000+" },
+          ]}
+        />
 
-      {/* ── Select Existing Organization ── */}
-      {organizations.length > 0 && (
-        <div>
-          <h2>Select Existing Organization</h2>
-          {organizations.map((org: any) => (
-            <div key={org.id} style={{ marginBottom: 12 }}>
-              <Button onClick={() => handleSelectExisting(org)}>
-                {org.name}
-              </Button>
-            </div>
-          ))}
-          <hr style={{ margin: "30px 0" }} />
-        </div>
-      )}
+        <hr className="my-8 border-white/10" />
 
-      {/* ── Create New Organization ── */}
-      <h2>Create New Organization</h2>
 
-      <Input
-        value={newOrgName}
-        onChange={(e: any) => setNewOrgName(e.target.value)}
-        placeholder="Organization name"
-      />
+        <h2>Type in your organization</h2>
 
-      <Button onClick={handleCreate} disabled={creating}>
-        {creating ? "Creating..." : "Create & Continue"}
-      </Button>
+        <TextInput
+          label="Organization Name"
+          value={newOrgName}
+          onChange={setNewOrgName}
+          placeholder="Organization name"
+        />
+
+        <Button onClick={handleCreate} disabled={creating}>
+          {creating ? "Creating..." : "Create & Continue"}
+        </Button>
+      </div>
     </Container>
   );
 }
-
-const labelStyle = {
-  display: "block",
-  marginBottom: 4,
-  color: "#aaa",
-  fontSize: 14,
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: 10,
-  marginBottom: 15,
-  background: "#111",
-  color: "white",
-  border: "1px solid #444",
-  borderRadius: 6,
-};

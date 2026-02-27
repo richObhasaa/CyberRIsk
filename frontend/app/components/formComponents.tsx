@@ -104,6 +104,35 @@ export const BigTextInput: React.FC<TextInputProps> = ({
     );
 };
 
+interface DateInputProps {
+    label: string;
+    value: string;
+    onChange: (value: string) => void;
+    className?: string;
+}
+
+export const DateInput: React.FC<DateInputProps> = ({
+    label,
+    value,
+    onChange,
+    className = "",
+}) => {
+    return (
+        <div className={`flex flex-col gap-1.5 w-full ${className}`}>
+            <label className="text-xs font-semibold text-gray-400 ml-1 tracking-wide">
+                {label}
+            </label>
+            <input
+                type="date"
+                value={value}
+                onChange={(e) => onChange(e.target.value)}
+                className="w-full bg-white/[0.03] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-[#B19EEF]/50 focus:shadow-[0_0_20px_-5px_rgba(177,158,239,0.2)] transition-all duration-300 glass-card
+                [&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:opacity-40 [&::-webkit-calendar-picker-indicator]:hover:opacity-100 [&::-webkit-calendar-picker-indicator]:cursor-pointer [&::-webkit-calendar-picker-indicator]:transition-opacity"
+            />
+        </div>
+    );
+};
+
 interface SelectInputProps {
     label: string;
     options: { label: string; value: string }[];

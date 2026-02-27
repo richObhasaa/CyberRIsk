@@ -196,12 +196,11 @@ export const generateSummary = (
 
 /* ===========================
  CHATBOT FUNCTIONS
+=========================== */
+
 export const getCategories = () =>
   request("/assessment/categories");
 
-  /* ===========================
-   CHATBOT FUNCTIONS
-=========================== */
 
 export const sendChatMessage = (
   payload: { message: string }

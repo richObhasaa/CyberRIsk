@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Container, Button, Input } from "./UI";
+import { Container, Button } from "./UI";
 import { addAsset } from "../../lib/api";
+import { TextInput, SelectInput } from "@/app/components/formComponents";
 
 export default function AssetStep({
   assessmentId,
@@ -53,78 +54,89 @@ export default function AssetStep({
 
   return (
     <Container>
-      <h2>Step 3 — Assets</h2>
+      <div className="flex flex-col gap-4">
+        <h2 className="text-2xl font-bold text-white">Step 3 — Assets</h2>
 
-      <Input
-        placeholder="Asset Name"
-        value={form.asset_name}
-        onChange={(e: any) =>
-          setForm({ ...form, asset_name: e.target.value })
-        }
-      />
 
-      <Input
-        placeholder="Owner"
-        value={form.owner}
-        onChange={(e: any) =>
-          setForm({ ...form, owner: e.target.value })
-        }
-      />
+        <TextInput
+          label="Asset Name"
+          placeholder="e.g. Web Application"
+          value={form.asset_name}
+          onChange={(value) => setForm({ ...form, asset_name: value })}
+        />
 
-      <Input
-        placeholder="Location"
-        value={form.location}
-        onChange={(e: any) =>
-          setForm({ ...form, location: e.target.value })
-        }
-      />
+        <TextInput
+          label="Owner"
+          placeholder="e.g. IT Department"
+          value={form.owner}
+          onChange={(value) => setForm({ ...form, owner: value })}
+        />
 
-      <div style={{ marginBottom: 15 }}>
-        <label>Asset Type</label>
-        <select
-          style={{ width: "100%", padding: 10 }}
+        <TextInput
+          label="Location"
+          placeholder="e.g. On-premise / Cloud"
+          value={form.location}
+          onChange={(value) => setForm({ ...form, location: value })}
+        />
+
+        <SelectInput
+          label="Asset Type"
           value={form.asset_type}
-          onChange={(e) =>
-            setForm({ ...form, asset_type: e.target.value })
-          }
-        >
-          <option>Application</option>
-          <option>Server</option>
-          <option>Database</option>
-          <option>Network</option>
-          <option>Endpoint</option>
-        </select>
-      </div>
+          onChange={(value) => setForm({ ...form, asset_type: value })}
+          options={[
+            { label: "Application", value: "Application" },
+            { label: "Server", value: "Server" },
+            { label: "Database", value: "Database" },
+            { label: "Network", value: "Network" },
+            { label: "Endpoint", value: "Endpoint" },
+          ]}
+        />
 
-      <div style={{ marginBottom: 20 }}>
-        <label>CIA Level</label>
-        <select
-          style={{ width: "100%", padding: 10 }}
+        <SelectInput
+          label="CIA Level"
           value={form.cia_level}
-          onChange={(e) =>
-            setForm({ ...form, cia_level: e.target.value })
-          }
-        >
-          <option>Low</option>
-          <option>Medium</option>
-          <option>High</option>
-        </select>
+          onChange={(value) => setForm({ ...form, cia_level: value })}
+          options={[
+            { label: "Low", value: "Low" },
+            { label: "Medium", value: "Medium" },
+            { label: "High", value: "High" },
+          ]}
+        />
+
+        <Button onClick={handleAddAsset}>+ Add Asset</Button>
+
+        {assets.length > 0 && (
+          <div className="mt-4 flex flex-col gap-2">
+            {assets.map((asset, i) => (
+              <div
+                key={i}
+                className="flex items-center justify-between px-4 py-3 bg-white/[0.03] border border-white/10 rounded-xl"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="bg-[#B19EEF]/20 text-[#B19EEF] border border-[#B19EEF]/30 rounded-lg px-2 py-0.5 text-xs font-bold">
+                    {asset.asset_type}
+                  </span>
+                  <span className="text-sm text-white font-medium">{asset.asset_name}</span>
+                </div>
+                <div className="flex items-center gap-3 text-xs text-gray-400">
+                  <span>{asset.owner}</span>
+                  <span>{asset.location}</span>
+                  <span className="text-[#B19EEF]">{asset.cia_level}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <p className="text-sm text-gray-400 mt-4">
+          Assets registered: <span className="text-white font-semibold">{assets.length}</span>
+        </p>
+
+        <div className="flex gap-3 mt-4">
+          {prevStep && <Button onClick={prevStep}>← Back</Button>}
+          <Button onClick={nextStep}>Continue →</Button>
+        </div>
       </div>
-
-      <Button onClick={handleAddAsset}>
-        + Add Asset
-      </Button>
-
-      <p style={{ marginTop: 15 }}>
-        Assets registered: {assets.length}
-      </p>
-
-      <Button
-        onClick={nextStep}
-        style={{ marginTop: 20 }}
-      >
-        Continue
-      </Button>
     </Container>
   );
 }

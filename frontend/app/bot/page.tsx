@@ -128,7 +128,7 @@ export default function ChatbotPage() {
   }
 
   return (
-    <div className="w-full flex flex-col gap-6 pt-10 bg-black text-white px-25 h-screen overflow-hidden">
+    <div className="w-full flex flex-col gap-6 pt-10 md:pt-20 bg-black text-white px-25 h-screen overflow-hidden">
 
       {/* Header */}
       <div className="flex flex-col">
@@ -155,11 +155,10 @@ export default function ChatbotPage() {
           {messages.map((msg, i) => (
             <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
               <div
-                className={`max-w-[70%] px-4 py-3 text-sm rounded-xl ${
-                  msg.role === "user"
-                    ? "bg-[#B19EEF] text-black"
-                    : "bg-neutral-900 border border-neutral-800 text-neutral-300"
-                }`}
+                className={`max-w-[70%] px-4 py-3 text-sm rounded-xl ${msg.role === "user"
+                  ? "bg-[#B19EEF] text-black"
+                  : "bg-neutral-900 border border-neutral-800 text-neutral-300"
+                  }`}
               >
                 {msg.filePreview && msg.fileType?.startsWith("image/") && (
                   <img

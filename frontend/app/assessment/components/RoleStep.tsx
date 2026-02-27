@@ -2,7 +2,7 @@ import { Container, Button } from "./UI";
 
 export default function RoleStep({ setRole, setStep }: any) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-[300px] text-center">
+    <div className="flex flex-col items-center justify-center min-h-[300px] text-center mt-15 md:mt-25">
 
       <h2 className="text-3xl font-bold mb-12">
         Select User Role

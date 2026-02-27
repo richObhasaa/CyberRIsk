@@ -39,7 +39,7 @@ export default function Home() {
                             showBorder={false}
                             className="text-6xl md:text-7xl font-bold tracking-tight"
                         >
-                            CyberRisk
+                            Assetra
                         </GradientText>
                     </div>
                 </div>
