@@ -119,6 +119,16 @@ export const getDrafts = () =>
    NEW FUNCTIONS
 =========================== */
 
+export const getITQuestions = () =>
+  request(
+    "/assessment/get-questions/it"
+  );
+
+export const getNonITQuestions = () =>
+  request(
+    "/assessment/get-questions/non-it"
+  );
+
 export const createAssessment = (
   payload: any
 ) =>
@@ -184,8 +194,8 @@ export const generateSummary = (
     payload
   );
 
-  /* ===========================
-   CHATBOT FUNCTIONS
+/* ===========================
+ CHATBOT FUNCTIONS
 =========================== */
 
 export const sendChatMessage = (

@@ -4,12 +4,9 @@ import { useState, useEffect } from "react";
 import ContentSection from "../../layouts/ContentSection";
 import { RangeInput, SelectInput, TextInput, BigTextInput, EmailInput } from "../../components/formComponents";
 import {
-    getMyOrganizations,
-    createOrganization,
-    getQuestions,
-    createAssessment,
-    submitSubcategory,
-} from "../../lib/api";
+    getITQuestions,
+    getNonITQuestions
+} from "../../lib/assessment";
 
 export default function FormPage() {
     const [formData, setFormData] = useState({
@@ -20,17 +17,28 @@ export default function FormPage() {
         test: 0,
     });
 
-    const [organizations, setOrganizations] = useState<any[]>([]);
-    const [selectedOrg, setSelectedOrg] = useState<any>(null);
-    const [assessmentId, setAssessmentId] = useState<string | null>(null);
+    const [itQuestions, setITQuestions] = useState<any[]>([]);
+    const [nonITQuestions, setNonITQuestions] = useState<any[]>([]);
 
     useEffect(() => {
         async function load() {
-            const res = await getMyOrganizations();
-            setOrganizations(res?.organizations || []);
+            const res = await getITQuestions();
+            setITQuestions(res.questions);
         }
         load();
     }, []);
+
+    console.log("IT Questions: " + JSON.stringify(itQuestions));
+
+    useEffect(() => {
+        async function load() {
+            const res = await getNonITQuestions();
+            setNonITQuestions(res.questions);
+        }
+        load();
+    }, []);
+
+    console.log("Non-IT Questions: " + JSON.stringify(nonITQuestions));
 
     return (
         <>

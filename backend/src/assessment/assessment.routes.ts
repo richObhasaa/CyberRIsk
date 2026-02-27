@@ -302,6 +302,55 @@ router.post(
   }
 );
 
+router.get(
+  "/get-questions/it",
+  verifyToken,
+  async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from("nist_questions")
+        .select("*")
+        .eq("mode", "it")
+        .order("subcategory_id", { ascending: true });
+
+      if (error) throw error;
+
+      res.json({
+        success: true,
+        questions: data || [],
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+)
+
+router.get(
+  "/get-questions/non-it",
+  verifyToken,
+  async (req, res) => {
+    try {
+      const { data, error } = await supabase
+        .from("nist_questions")
+        .select("*")
+        .eq("mode", "non-it")
+        .order("subcategory_id", { ascending: true });
+
+      if (error) {
+        console.log("ERROR: " + error);
+        throw error;
+      }
+
+      res.json({
+        success: true,
+        questions: data || [],
+      });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  }
+)
+
 /* LIST */
 router.get(
   "/list",
@@ -696,7 +745,7 @@ router.post("/generate-summary", verifyToken, async (req, res) => {
     else if (avgResidual > 5) riskTier = "MEDIUM";
 
     /* AI SUMMARY (BASIC VERSION) */
-const aiSummary = `
+    const aiSummary = `
 === OFFICIAL AI RISK ASSESSMENT REPORT ===
 
 Assessment Period:
