@@ -40,14 +40,14 @@ export default function QuestionsStep({
     if (role === "IT") {
       // For IT, one score per subcategory
       for (const cat of Object.keys(grouped)) {
-        if (!answers[cat]) {
+        if (answers[cat] === undefined || answers[cat] === null) {
           alert("Please answer all subcategories before submitting.");
           return;
         }
       }
     } else {
       for (const q of questions) {
-        if (!answers[q.id]) {
+        if (answers[q.id] === undefined || answers[q.id] === null) {
           alert("Please answer all questions before submitting.");
           return;
         }
@@ -99,7 +99,7 @@ export default function QuestionsStep({
   // For IT: count per subcategory; for NON_IT: count per question
   const totalCount = role === "IT" ? Object.keys(grouped).length : questions.length;
   const answeredCount = role === "IT"
-    ? Object.keys(grouped).filter((cat) => !!answers[cat]).length
+    ? Object.keys(grouped).filter((cat) => answers[cat] !== undefined && answers[cat] !== null).length
     : Object.keys(answers).length;
 
   // Build a lookup map: subcategory_id → category info
