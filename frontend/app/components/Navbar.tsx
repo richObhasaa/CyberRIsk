@@ -48,13 +48,13 @@ export default function Navbar({ mode }: NavbarProps) {
                 </div>
                 {/* Middle: Links */}
                 <div className={`hidden ${(mode !== null && (mode === "short" || mode === "dashboard")) ? "md:hidden" : "md:flex"} items-center gap-6`}>
-                    <a href="#features" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
-                        Manual
+                    <a href="/bot" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                        AI-Chatbot
                     </a>
                     <a href="/check-url" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
                         URL Checker
                     </a>
-                    <a href="/audit" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                    <a href="/assessment" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
                         Audit Form
                     </a>
                     {accessToken === null ?
