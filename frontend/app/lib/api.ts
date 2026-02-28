@@ -119,16 +119,6 @@ export const getDrafts = () =>
    NEW FUNCTIONS
 =========================== */
 
-export const getITQuestions = () =>
-  request(
-    "/assessment/get-questions/it"
-  );
-
-export const getNonITQuestions = () =>
-  request(
-    "/assessment/get-questions/non-it"
-  );
-
 export const createAssessment = (
   payload: any
 ) =>
@@ -138,12 +128,20 @@ export const createAssessment = (
     payload
   );
 
-export const getQuestions = (
-  role: string
-) =>
-  request(
-    `/assessment/questions/${role}`
-  );
+export const getITQuestions = () =>
+  request("/assessment/get-questions/it");
+
+export const getNonITQuestions = () =>
+  request("/assessment/get-questions/non-it");
+
+// Fix this
+export const getQuestions = (role: string) =>
+  role === "IT" ? getITQuestions() : getNonITQuestions();
+
+// Add this (missing from doc 10)
+export const getCategories = () =>
+  request("/assessment/categories");
+
 
 export const submitAll = (
   payload: any
@@ -197,10 +195,6 @@ export const generateSummary = (
 /* ===========================
  CHATBOT FUNCTIONS
 =========================== */
-
-export const getCategories = () =>
-  request("/assessment/categories");
-
 
 export const sendChatMessage = (
   payload: { message: string }

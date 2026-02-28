@@ -25,7 +25,7 @@ export default function AssessmentPage() {
   const [assessmentId, setAssessmentId] = useState<string | null>(null);
 
   const [questions, setQuestions] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const [period, setPeriod] = useState({ start: "", end: "" });
   const [orgMeta, setOrgMeta] = useState({ business_sector: "", employee_range: "" });
@@ -133,18 +133,18 @@ export default function AssessmentPage() {
       />
     );
 
-if (step === 2)
-  return (
-    <OrganizationStep
-      organizations={organizations}
-      onSelect={handleOrganizationSelect}
-      createOrganization={createOrganization}
-      period={period}
-      setPeriod={setPeriod}
-      orgMeta={orgMeta}
-      setOrgMeta={setOrgMeta}
-    />
-  );
+  if (step === 2)
+    return (
+      <OrganizationStep
+        organizations={organizations}
+        onSelect={handleOrganizationSelect}
+        createOrganization={createOrganization}
+        period={period}
+        setPeriod={setPeriod}
+        orgMeta={orgMeta}
+        setOrgMeta={setOrgMeta}
+      />
+    );
 
   if (step === 3)
     return (
@@ -180,7 +180,7 @@ if (step === 2)
       />
     );
 
-   return (
+  return (
     <div className="h-max w-full flex flex-col overflow-hidden text-white">
 
       {/* HERO */}

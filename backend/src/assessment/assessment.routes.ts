@@ -335,7 +335,7 @@ router.get(
       const { data, error } = await supabase
         .from("nist_questions")
         .select("*")
-        .eq("mode", "it")
+        .eq("mode", "IT")
         .order("subcategory_id", { ascending: true });
 
       if (error) throw error;
@@ -358,7 +358,7 @@ router.get(
       const { data, error } = await supabase
         .from("nist_questions")
         .select("*")
-        .eq("mode", "non-it")
+        .eq("mode", "NON_IT")
         .order("subcategory_id", { ascending: true });
 
       if (error) {
