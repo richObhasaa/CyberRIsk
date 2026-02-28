@@ -9,3 +9,11 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
     return <>{children}</>;
 }
+
+export function ProtectedRouteFunction() {
+    const { loading } = useRequireAuth();
+
+    if (loading) return null;
+
+    return true;
+}

@@ -26,7 +26,7 @@ export function useRequireAuth() {
 
     // Only unblock rendering when we're certain: authenticated + correct page
     setLoading(false);
-  }, [pathname, router]);
+  }, [pathname]);
 
   return { loading };
 }

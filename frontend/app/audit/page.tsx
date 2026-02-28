@@ -10,7 +10,7 @@ import { getEmail } from "../lib/auth";
 export default function FormPage() {
     const userEmail = getEmail();
     return (
-        <ProtectedRoute>
+        <>
             <div className="h-max w-full flex flex-col overflow-hidden">
                 <div className="relative h-[50vh] w-full text-white fade-in flex items-center justify-center">
                     <div className="mt-15">
@@ -48,6 +48,6 @@ export default function FormPage() {
                 <div className="hidden md:block absolute pointer-events-none inset-y-0 right-0 w-80 bg-gradient-to-l from-black to-transparent" />
             </div>
             <LoggedInAsBar userEmail={userEmail} />
-        </ProtectedRoute>
+        </>
     );
 }
