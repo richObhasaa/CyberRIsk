@@ -38,7 +38,7 @@ export default function Navbar({ mode }: NavbarProps) {
                 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)] backdrop-blur-2xl backdrop-saturate-150
                 transition-all duration-500 motion-reduce:duration-1 rounded-full
                 ${isShort
-                    ? "w-125 py-2 px-4"
+                    ? "w-150 py-2 px-4"
                     : "w-[calc(100vw-6rem)] py-2 px-2"
                 }
                 ${mode === "short" || mode === "dashboard" ? "w-auto" : ""}
@@ -48,6 +48,9 @@ export default function Navbar({ mode }: NavbarProps) {
                 </div>
                 {/* Middle: Links */}
                 <div className={`hidden ${(mode !== null && (mode === "short" || mode === "dashboard")) ? "md:hidden" : "md:flex"} items-center gap-6`}>
+                    <a href="/user-manual" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
+                        Manual
+                    </a>
                     <a href="/bot" className="text-sm font-medium text-gray-300 hover:text-white transition-colors">
                         AI-Chatbot
                     </a>

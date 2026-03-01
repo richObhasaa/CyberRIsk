@@ -48,7 +48,7 @@ export default function AssetStep({
         });
       }
     } catch (err) {
-      alert("Error adding asset");
+      alert("Error adding asset" + err);
     }
   }
 
@@ -84,6 +84,7 @@ export default function AssetStep({
           value={form.asset_type}
           onChange={(value) => setForm({ ...form, asset_type: value })}
           options={[
+            { label: "Select Asset Type", value: "" },
             { label: "Application", value: "Application" },
             { label: "Server", value: "Server" },
             { label: "Database", value: "Database" },

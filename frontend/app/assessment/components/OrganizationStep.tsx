@@ -98,6 +98,7 @@ export default function OrganizationStep({
           value={orgMeta.employee_range}
           onChange={(value) => setOrgMeta({ ...orgMeta, employee_range: value })}
           options={[
+            { label: "Select Employee Range", value: "" },
             { label: "1-50", value: "1-50" },
             { label: "51-200", value: "51-200" },
             { label: "201-1000", value: "201-1000" },
